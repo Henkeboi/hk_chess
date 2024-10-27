@@ -6,7 +6,6 @@
 
 #include <stdint.h>
 #include <vector>
-#include <tuple>
 #include <array>
 
 class Board {
@@ -14,8 +13,8 @@ public:
 	Board();
 	Board(const Board& board, const move::Move& move);
 	void print() const;
-	void get_white_moves() const;
-	void get_black_moves() const;
+	void get_white_moves(std::vector<move::Move>& moves, std::vector<Board>& boards) const;
+	void get_black_moves(std::vector<move::Move>& moves, std::vector<Board>& boards) const;
 	const std::array<std::array<uint8_t, 8>, 8>& get_board() const;
 	const move::Move& get_en_passant() const;
 private:

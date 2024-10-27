@@ -92,9 +92,7 @@ const move::Move& Board::get_en_passant() const {
 	return _en_passant;
 }
 
-void Board::get_white_moves() const {
-	std::vector<move::Move> moves;
-	std::vector<Board> boards;
+void Board::get_white_moves(std::vector<move::Move>& moves, std::vector<Board>& boards) const {
 	for (uint8_t row = 0; row < 8; ++row) {
 		for (uint8_t col = 0; col < 8; ++col) {
 			switch (_board[row][col]) {
@@ -122,16 +120,13 @@ void Board::get_white_moves() const {
 	}
 }
 
-void Board::get_black_moves() const {
-	std::vector<move::Move> moves;
-	std::vector<Board> boards;
+void Board::get_black_moves(std::vector<move::Move>& moves, std::vector<Board>& boards) const {
 	for (uint8_t row = 0; row < 8; ++row) {
 		for (uint8_t col = 0; col < 8; ++col) {
 			switch (_board[row][col]) {
 				case (pieces::black | pieces::pawn):
 					_get_black_pawn_moves(row, col, moves, boards);
 					break;
-				/*
 				case (pieces::black | pieces::knight):
 					_get_black_knight_moves(row, col, moves, boards);
 					break;
@@ -148,7 +143,6 @@ void Board::get_black_moves() const {
 				case (pieces::black | pieces::king):
 					_get_black_king_moves(row, col, moves, boards);
 					break;
-				*/
 			}
 		}
 	}
@@ -283,6 +277,65 @@ inline void Board::_get_white_knight_moves(uint8_t row, uint8_t col, std::vector
 	}
 }
 
+inline void Board::_get_black_knight_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards) const {
+	if (row + 2 < 8) {
+		if (col + 1 < 8) {
+			if ((_board[row + 2][col + 1] & pieces::black) == 0) {
+				moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row + 2), static_cast<uint8_t>(col + 1)});
+				boards.emplace_back(Board{*this, moves.back()});
+			}
+		}
+		if (col - 1 > -1) {
+			if ((_board[row + 2][col - 1] & pieces::black) == 0) {
+				moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row + 2), static_cast<uint8_t>(col - 1)});
+				boards.emplace_back(Board{*this, moves.back()});
+			}
+		}
+	}
+	if (row + 1 < 8) {
+		if (col + 2 < 8) {
+			if ((_board[row + 1][col + 2] & pieces::black) == 0) {
+				moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row + 1), static_cast<uint8_t>(col + 2)});
+				boards.emplace_back(Board{*this, moves.back()});
+			}
+		}
+		if (col - 2 > -1) {
+			if ((_board[row + 1][col - 2] & pieces::black) == 0) {
+				moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row + 1), static_cast<uint8_t>(col - 2)});
+				boards.emplace_back(Board{*this, moves.back()});
+			}
+		}
+	}	
+	if (row - 1 > -1) {
+		if (col + 2 < 8) {
+			if ((_board[row - 1][col + 2] & pieces::black) == 0) {
+				moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row - 1), static_cast<uint8_t>(col + 2)});
+				boards.emplace_back(Board{*this, moves.back()});
+			}
+		}
+		if (col - 2 > -1) {
+			if ((_board[row - 1][col - 2] & pieces::black) == 0) {
+				moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row - 1), static_cast<uint8_t>(col - 2)});
+				boards.emplace_back(Board{*this, moves.back()});
+			}
+		}
+	}	
+	if (row - 2 > -1) {
+		if (col + 1 < 8) {
+			if ((_board[row - 2][col + 1] & pieces::black) == 0) {
+				moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row - 2), static_cast<uint8_t>(col + 1)});
+				boards.emplace_back(Board{*this, moves.back()});
+			}
+		}
+		if (col - 1 > -1) {
+			if ((_board[row - 2][col - 1] & pieces::black) == 0) {
+				moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row - 2), static_cast<uint8_t>(col - 1)});
+				boards.emplace_back(Board{*this, moves.back()});
+			}
+		}
+	}
+}
+
 inline void Board::_get_white_bishop_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards) const {
 	[this, &moves, &boards](uint8_t row, uint8_t col) -> void {
 		auto old_row = row;
@@ -360,7 +413,85 @@ inline void Board::_get_white_bishop_moves(uint8_t row, uint8_t col, std::vector
 		}
 	}(row, col);
 }
-	
+
+inline void Board::_get_black_bishop_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards) const {
+	[this, &moves, &boards](uint8_t row, uint8_t col) -> void {
+		auto old_row = row;
+		auto old_col = col;
+		while (row < 7 && col < 7) {
+			++row;
+			++col;
+			if (_board[row][col] == pieces::empty) {
+				moves.emplace_back(move::Move{old_row, old_col, static_cast<uint8_t>(row), static_cast<uint8_t>(col)});
+				boards.emplace_back(Board{*this, moves.back()});
+			} else if ((_board[row][col] & pieces::black) == 0) {
+				moves.emplace_back(move::Move{old_row, old_col, static_cast<uint8_t>(row), static_cast<uint8_t>(col)});
+				boards.emplace_back(Board{*this, moves.back()});
+				return;
+			}	else {
+				return;
+			}
+		}
+	}(row, col);
+
+	[this, &moves, &boards](uint8_t row, uint8_t col) -> void {
+		auto old_row = row;
+		auto old_col = col;
+		while (row < 7 && col > 0) {
+			++row;
+			--col;
+			if (_board[row][col] == pieces::empty) {
+				moves.emplace_back(move::Move{old_row, old_col, static_cast<uint8_t>(row), static_cast<uint8_t>(col)});
+				boards.emplace_back(Board{*this, moves.back()});
+			} else if ((_board[row][col] & pieces::black) == 0) {
+				moves.emplace_back(move::Move{old_row, old_col, static_cast<uint8_t>(row), static_cast<uint8_t>(col)});
+				boards.emplace_back(Board{*this, moves.back()});
+				return;
+			}	else {
+				return;
+			}
+		}
+	}(row, col);
+
+	[this, &moves, &boards](uint8_t row, uint8_t col) -> void {
+		auto old_row = row;
+		auto old_col = col;
+		while (row > 0 && col < 7) {
+			--row;
+			++col;
+			if (_board[row][col] == pieces::empty) {
+				moves.emplace_back(move::Move{old_row, old_col, static_cast<uint8_t>(row), static_cast<uint8_t>(col)});
+				boards.emplace_back(Board{*this, moves.back()});
+			} else if ((_board[row][col] & pieces::black) == 0) {
+				moves.emplace_back(move::Move{old_row, old_col, static_cast<uint8_t>(row), static_cast<uint8_t>(col)});
+				boards.emplace_back(Board{*this, moves.back()});
+				return;
+			}	else {
+				return;
+			}
+		}
+	}(row, col);
+
+	[this, &moves, &boards](uint8_t row, uint8_t col) -> void {
+		auto old_row = row;
+		auto old_col = col;
+		while (row > 0 && col > 0) {
+			--row;
+			--col;
+			if (_board[row][col] == pieces::empty) {
+				moves.emplace_back(move::Move{old_row, old_col, static_cast<uint8_t>(row), static_cast<uint8_t>(col)});
+				boards.emplace_back(Board{*this, moves.back()});
+			} else if ((_board[row][col] & pieces::black) == 0) {
+				moves.emplace_back(move::Move{old_row, old_col, static_cast<uint8_t>(row), static_cast<uint8_t>(col)});
+				boards.emplace_back(Board{*this, moves.back()});
+				return;
+			}	else {
+				return;
+			}
+		}
+	}(row, col);
+}
+
 inline void Board::_get_white_rook_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards) const {
 	[this, &moves, &boards](uint8_t row, uint8_t col) -> void {
 		auto old_row = row;
@@ -431,6 +562,75 @@ inline void Board::_get_white_rook_moves(uint8_t row, uint8_t col, std::vector<m
 	}(row, col);
 }
 
+inline void Board::_get_black_rook_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards) const {
+	[this, &moves, &boards](uint8_t row, uint8_t col) -> void {
+		auto old_row = row;
+		while (row < 7) {
+			++row;
+			if (_board[row][col] == pieces::empty) {
+				moves.emplace_back(move::Move{old_row, col, static_cast<uint8_t>(row), static_cast<uint8_t>(col)});
+				boards.emplace_back(Board{*this, moves.back()});
+			} else if ((_board[row][col] & pieces::black) == 0) {
+				moves.emplace_back(move::Move{old_row, col, static_cast<uint8_t>(row), static_cast<uint8_t>(col)});
+				boards.emplace_back(Board{*this, moves.back()});
+				return;
+			}	else {
+				return;
+			}
+		}
+	}(row, col);
+
+	[this, &moves, &boards](uint8_t row, uint8_t col) -> void {
+		auto old_row = row;
+		while (row > 0) {
+			--row;
+			if (_board[row][col] == pieces::empty) {
+				moves.emplace_back(move::Move{old_row, col, static_cast<uint8_t>(row), static_cast<uint8_t>(col)});
+				boards.emplace_back(Board{*this, moves.back()});
+			} else if ((_board[row][col] & pieces::black) == 0) {
+				moves.emplace_back(move::Move{old_row, col, static_cast<uint8_t>(row), static_cast<uint8_t>(col)});
+				boards.emplace_back(Board{*this, moves.back()});
+				return;
+			}	else {
+				return;
+			}
+		}
+	}(row, col);
+
+	[this, &moves, &boards](uint8_t row, uint8_t col) -> void {
+		auto old_col = col;
+		while (col < 7) {
+			++col;
+			if (_board[row][col] == pieces::empty) {
+				moves.emplace_back(move::Move{row, old_col, static_cast<uint8_t>(row), static_cast<uint8_t>(col)});
+				boards.emplace_back(Board{*this, moves.back()});
+			} else if ((_board[row][col] & pieces::black) == 0) {
+				moves.emplace_back(move::Move{row, old_col, static_cast<uint8_t>(row), static_cast<uint8_t>(col)});
+				boards.emplace_back(Board{*this, moves.back()});
+				return;
+			}	else {
+				return;
+			}
+		}
+	}(row, col);
+
+	[this, &moves, &boards](uint8_t row, uint8_t col) -> void {
+		auto old_col = col;
+		while (col > 0) {
+			--col;
+			if (_board[row][col] == pieces::empty) {
+				moves.emplace_back(move::Move{row, old_col, static_cast<uint8_t>(row), static_cast<uint8_t>(col)});
+				boards.emplace_back(Board{*this, moves.back()});
+			} else if ((_board[row][col] & pieces::black) == 0) {
+				moves.emplace_back(move::Move{row, old_col, static_cast<uint8_t>(row), static_cast<uint8_t>(col)});
+				boards.emplace_back(Board{*this, moves.back()});
+				return;
+			}	else {
+				return;
+			}
+		}
+	}(row, col);
+}
 
 inline void Board::_get_white_king_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards) const {
 	if (row + 1 < 8) {
@@ -485,4 +685,58 @@ inline void Board::_get_white_king_moves(uint8_t row, uint8_t col, std::vector<m
 		}
 	}
 }	
+
+inline void Board::_get_black_king_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards) const {
+	if (row + 1 < 8) {
+		if ((_board[row + 1][col] & pieces::black) == 0) {
+			moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row + 1), static_cast<uint8_t>(col)});
+			boards.emplace_back(Board{*this, moves.back()});
+		}
+		if (col + 1 < 8) {
+			if ((_board[row + 1][col + 1] & pieces::black) == 0) {
+				moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row + 1), static_cast<uint8_t>(col + 1)});
+				boards.emplace_back(Board{*this, moves.back()});
+			}
+		}
+		if (col - 1 > -1) {
+			if ((_board[row + 1][col - 1] & pieces::black) == 0) {
+				moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row + 1), static_cast<uint8_t>(col - 1)});
+				boards.emplace_back(Board{*this, moves.back()});
+			}
+		}
+	}
+
+	if (col + 1 < 8) {
+		if ((_board[row][col + 1] & pieces::black) == 0) {
+			moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row), static_cast<uint8_t>(col + 1)});
+			boards.emplace_back(Board{*this, moves.back()});
+		}
+	}
+
+	if (col - 1 > -1) {
+		if ((_board[row][col - 1] & pieces::black) == 0) {
+			moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row), static_cast<uint8_t>(col - 1)});
+			boards.emplace_back(Board{*this, moves.back()});
+		}
+	}
+
+	if (row - 1 > -1) {
+		if ((_board[row - 1][col] & pieces::black) == 0) {
+			moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row - 1), static_cast<uint8_t>(col)});
+			boards.emplace_back(Board{*this, moves.back()});
+		}
+		if (col + 1 < 8) {
+			if ((_board[row - 1][col + 1] & pieces::black) == 0) {
+				moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row - 1), static_cast<uint8_t>(col + 1)});
+				boards.emplace_back(Board{*this, moves.back()});
+			}
+		}
+		if (col - 1 > -1) {
+			if ((_board[row - 1][col - 1] & pieces::black) == 0) {
+				moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row - 1), static_cast<uint8_t>(col - 1)});
+				boards.emplace_back(Board{*this, moves.back()});
+			}
+		}
+	}
+}
 
