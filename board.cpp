@@ -148,6 +148,23 @@ void Board::get_black_moves(std::vector<move::Move>& moves, std::vector<Board>& 
 	}
 }
 
+bool Board::white_in_checkmate(std::vector<move::Move>& moves) const {
+	for (auto& move : moves) {
+		if (_board[move.get_to_row()][move.get_to_col()] == (pieces::white | pieces::king)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Board::black_in_checkmate(std::vector<move::Move>& moves) const {
+	for (auto& move : moves) {
+		if (_board[move.get_to_row()][move.get_to_col()] == (pieces::black | pieces::king)) {
+			return true;
+		}
+	}
+	return false;
+}
 
 inline void Board::_get_white_pawn_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards) const {
 	// 1 step forward

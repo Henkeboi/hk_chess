@@ -15,6 +15,8 @@ public:
 	void print() const;
 	void get_white_moves(std::vector<move::Move>& moves, std::vector<Board>& boards) const;
 	void get_black_moves(std::vector<move::Move>& moves, std::vector<Board>& boards) const;
+	bool white_in_checkmate(std::vector<move::Move>& moves) const;
+	bool black_in_checkmate(std::vector<move::Move>& moves) const;
 	const std::array<std::array<uint8_t, 8>, 8>& get_board() const;
 	const move::Move& get_en_passant() const;
 private:

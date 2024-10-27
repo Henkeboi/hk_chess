@@ -12,8 +12,11 @@ move.o: move.cpp
 board.o: pieces.o move.o board.cpp
 	$(CXX) -c -o board.o move.o pieces.o board.cpp
 
-main: pieces.o move.o board.o main.cpp
-	$(CXX) -o main main.cpp move.o board.o $(CXXFLAGS)
+minmax.o: board.o pieces.o move.o minmax.cpp
+	$(CXX) -c -o minmax.o board.o move.o minmax.cpp
+
+main: pieces.o move.o minmax.o board.o main.cpp
+	$(CXX) -o main main.cpp move.o board.o minmax.o $(CXXFLAGS)
 
 clean:
-	rm -f main.o main board.o pieces.o move.o
+	rm -f main.o main minmax.o board.o pieces.o move.o
