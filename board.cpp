@@ -756,4 +756,3 @@ inline void Board::_get_black_king_moves(uint8_t row, uint8_t col, std::vector<m
 		}
 	}
 }
-

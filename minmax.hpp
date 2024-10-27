@@ -3,8 +3,8 @@
 
 #include "board.hpp"
 
-namespace {
-	void minmax(Board board, int depth, bool maximizing_player);
+namespace minmax {
+	float minmax(const Board& board, int depth, bool maximizing_player);
 
 }
 
