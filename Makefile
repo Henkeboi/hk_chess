@@ -12,14 +12,18 @@ move.o: move.cpp
 board.o: board.cpp
 	$(CXX) -c -o board.o board.cpp
 
-minmax.o: minmax.cpp
-	$(CXX) -c -o minmax.o minmax.cpp
+alpha_beta.o: alpha_beta.cpp
+	$(CXX) -c -o alpha_beta.o alpha_beta.cpp
 
 eval.o: eval.cpp 
 	$(CXX) -c -o eval.o eval.cpp
 
-main: eval.o pieces.o move.o minmax.o board.o main.cpp
-	$(CXX) -o main main.cpp move.o board.o minmax.o eval.o $(CXXFLAGS)
+visualization.o: visualization.cpp 
+	$(CXX) -c -o visualization.o visualization.cpp
+
+
+main: eval.o pieces.o move.o alpha_beta.o board.o visualization.o main.cpp
+	$(CXX) -o main main.cpp move.o board.o alpha_beta.o eval.o visualization.o $(CXXFLAGS)
 
 clean:
-	rm -f main.o main minmax.o board.o pieces.o move.o
+	rm -f main.o main eval.o alpha_beta.o board.o pieces.o move.o
