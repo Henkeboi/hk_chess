@@ -15,10 +15,15 @@ public:
 	void print() const;
 	void get_white_moves(std::vector<move::Move>& moves, std::vector<Board>& boards) const;
 	void get_black_moves(std::vector<move::Move>& moves, std::vector<Board>& boards) const;
-	bool white_in_checkmate(std::vector<move::Move>& moves) const;
-	bool black_in_checkmate(std::vector<move::Move>& moves) const;
+	bool white_in_checkmate(const std::vector<move::Move>& moves) const;
+	bool white_in_checkmate() const;
+	bool black_in_checkmate(const std::vector<move::Move>& moves) const;
+	bool black_in_checkmate() const;
+	const std::vector<Board> get_previous_boards() const;
+	const std::vector<move::Move> get_prev_moves() const;
 	const std::array<std::array<uint8_t, 8>, 8>& get_board() const;
 	const move::Move& get_en_passant() const;
+	bool operator <(const Board& rhs) const;
 private:
 	inline void _get_white_pawn_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards) const;
 	inline void _get_white_knight_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards) const;
@@ -30,9 +35,8 @@ private:
 	inline void _get_black_bishop_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards) const;
 	inline void _get_black_rook_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards) const;
 	inline void _get_black_king_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards) const;
-
-		std::array<std::array<uint8_t, 8>, 8> _board;
-
+	std::array<std::array<uint8_t, 8>, 8> _board;
+	std::vector<move::Move> _prev_moves;
 	move::Move _en_passant;
 };
 

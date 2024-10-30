@@ -1,11 +1,13 @@
 #ifndef __EVAL__HPP__
 #define __EVAL__HPP__
 
+#include "board.hpp"
+#include "move.hpp"
 #include "stdint.h"
-#include <array>
+#include <memory>
 
 namespace eval {
-	float eval(const std::array<std::array<uint8_t, 8>, 8>& board);
+	int eval(const Board& board);
 }
 
 #endif

@@ -1,17 +1,25 @@
+#include <iostream>
 #include <print>
 
 #include "board.hpp"
-#include "minmax.hpp"
+#include "alpha_beta.hpp"
+#include "visualization.hpp"
 #include <vector>
 #include <chrono>
+#include <pthread.h>
+
 
 int main() {
-	auto t1 = std::chrono::high_resolution_clock::now();
-	Board board;
-	std::println("{}", minmax::minmax(board, 6, true));
+	Board board {};
+	move::Move best_move{0, 0, 0, 0};
+	int depth = 4;
+	bool maximizing_player = true;
 	
-	auto t2 = std::chrono::high_resolution_clock::now();
-	std::println("{}", std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count());
-
+	for (int i = 0; i < 1000; ++i) {
+		visualization::update_visualization(board);
+		alpha_beta::alpha_beta(board, depth, -std::numeric_limits<float>::max(), std::numeric_limits<float>::max(), maximizing_player, best_move, depth);
+		board = Board{board, best_move};
+		maximizing_player = !maximizing_player;
+	}
   return 0;
 }

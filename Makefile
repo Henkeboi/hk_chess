@@ -26,4 +26,4 @@ main: eval.o pieces.o move.o alpha_beta.o board.o visualization.o main.cpp
 	$(CXX) -o main main.cpp move.o board.o alpha_beta.o eval.o visualization.o $(CXXFLAGS)
 
 clean:
-	rm -f main.o main eval.o alpha_beta.o board.o pieces.o move.o
+	rm -f main.o main eval.o alpha_beta.o board.o pieces.o move.o visualization.o

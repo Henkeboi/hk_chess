@@ -3,12 +3,13 @@
 #include <print>
 #include <cstring>
 
-
 #include <chrono>
+
+#include <iostream>
 
 
 Board::Board() 
-: _en_passant(move::Move(0, 0, 0, 0)) {
+: _prev_moves(std::vector<move::Move>{}), _en_passant(move::Move(0, 0, 0, 0)) {
 	_board[0][0] = pieces::white | pieces::rook;
 	_board[0][1] = pieces::white | pieces::knight;
 	_board[0][2] = pieces::white | pieces::bishop;
@@ -43,7 +44,7 @@ Board::Board()
 }
 
 Board::Board(const Board& board, const move::Move& move)
-: _board(board.get_board()), _en_passant(board.get_en_passant()) {
+: _board(board.get_board()), _prev_moves(board.get_prev_moves()), _en_passant(board.get_en_passant()) {
 	if (_en_passant.get_to_col() == move.get_to_col() && _en_passant.get_to_row() + 1 == move.get_to_row()) {
 		if (_board[move.get_from_row()][move.get_from_col()] == (pieces::white | pieces::pawn)) {
 			_board[_en_passant.get_to_row()][_en_passant.get_to_col()] = pieces::empty;
@@ -68,6 +69,7 @@ Board::Board(const Board& board, const move::Move& move)
 
 	_board[move.get_to_row()][move.get_to_col()] = _board[move.get_from_row()][move.get_from_col()];
 	_board[move.get_from_row()][move.get_from_col()] = pieces::empty;
+	_prev_moves.emplace_back(move);
 }
 
 void Board::print() const {
@@ -84,6 +86,13 @@ void Board::print() const {
 	std::println();
 }
 
+const std::vector<Board> Board::get_previous_boards() const {
+	return std::vector<Board>{};
+}
+
+const std::vector<move::Move> Board::get_prev_moves() const {
+	return _prev_moves;
+}
 const std::array<std::array<uint8_t, 8>, 8>& Board::get_board() const {
 	return _board;
 }
@@ -148,8 +157,8 @@ void Board::get_black_moves(std::vector<move::Move>& moves, std::vector<Board>& 
 	}
 }
 
-bool Board::white_in_checkmate(std::vector<move::Move>& moves) const {
-	for (auto& move : moves) {
+bool Board::white_in_checkmate(const std::vector<move::Move>& moves) const {
+	for (const auto& move : moves) {
 		if (_board[move.get_to_row()][move.get_to_col()] == (pieces::white | pieces::king)) {
 			return true;
 		}
@@ -157,8 +166,8 @@ bool Board::white_in_checkmate(std::vector<move::Move>& moves) const {
 	return false;
 }
 
-bool Board::black_in_checkmate(std::vector<move::Move>& moves) const {
-	for (auto& move : moves) {
+bool Board::black_in_checkmate(const std::vector<move::Move>& moves) const {
+	for (const auto& move : moves) {
 		if (_board[move.get_to_row()][move.get_to_col()] == (pieces::black | pieces::king)) {
 			return true;
 		}
@@ -166,9 +175,23 @@ bool Board::black_in_checkmate(std::vector<move::Move>& moves) const {
 	return false;
 }
 
+bool Board::operator <(const Board& rhs) const {
+	for (int row = 0; row < 8; ++row) {
+		for (int col = 0; col < 8; ++col) {
+			if (_board[row][col] < rhs.get_board()[row][col]) {
+				return true;
+			} else if (_board[row][col] > rhs.get_board()[row][col]) {
+				return false;
+			}
+		}
+	}
+	return false;
+}
+
+
 inline void Board::_get_white_pawn_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards) const {
 	// 1 step forward
-	if (_board[row + 1][col] == pieces::empty) {
+	if (row < 7 && _board[row + 1][col] == pieces::empty) {
 		moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row + 1), col});
 		boards.emplace_back(Board{*this, moves.back()});
 		// 2 steps forward
@@ -202,7 +225,7 @@ inline void Board::_get_white_pawn_moves(uint8_t row, uint8_t col, std::vector<m
 
 inline void Board::_get_black_pawn_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards) const {
 	// 1 step forward
-	if (_board[row - 1][col] == pieces::empty) {
+	if (row > 1 && _board[row - 1][col] == pieces::empty) {
 		moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row - 1), col});
 		boards.emplace_back(Board{*this, moves.back()});
 		// 2 steps forward
@@ -224,10 +247,10 @@ inline void Board::_get_black_pawn_moves(uint8_t row, uint8_t col, std::vector<m
 	
 	// en passant	
 	if (row == 3 && _en_passant.get_to_row() == 3) {
-		if (col == _en_passant.get_to_col() - 1) {
+		if (col == _en_passant.get_to_col() + 1) {
 			moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row - 1), static_cast<uint8_t>(col - 1)});
 			boards.emplace_back(Board{*this, moves.back()});
-		} else if (col == _en_passant.get_to_col() + 1) {
+		} else if (col == _en_passant.get_to_col() - 1) {
 			moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row - 1), static_cast<uint8_t>(col + 1)});
 			boards.emplace_back(Board{*this, moves.back()});
 		}  
