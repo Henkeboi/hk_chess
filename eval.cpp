@@ -11,7 +11,7 @@ int eval::eval(const Board& board) {
 	int eval = 0;
 	for (int row = 0; row < 8; ++row) {
 		for (int col = 0; col < 8; ++col) {
-			uint8_t piece = board.get_board()[row][col];
+			uint8_t piece = board.get_raw_board()[row][col];
 			if (piece == (pieces::black | pieces::pawn)) {
 				eval -= pieces::pawn_value;
 			} else if (piece == (pieces::black | pieces::knight)) {

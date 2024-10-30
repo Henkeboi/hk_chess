@@ -19,9 +19,7 @@ public:
 	bool white_in_checkmate() const;
 	bool black_in_checkmate(const std::vector<move::Move>& moves) const;
 	bool black_in_checkmate() const;
-	const std::vector<Board> get_previous_boards() const;
-	const std::vector<move::Move> get_prev_moves() const;
-	const std::array<std::array<uint8_t, 8>, 8>& get_board() const;
+	const std::array<std::array<uint8_t, 8>, 8>& get_raw_board() const;
 	const move::Move& get_en_passant() const;
 	bool operator <(const Board& rhs) const;
 private:
@@ -36,7 +34,6 @@ private:
 	inline void _get_black_rook_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards) const;
 	inline void _get_black_king_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards) const;
 	std::array<std::array<uint8_t, 8>, 8> _board;
-	std::vector<move::Move> _prev_moves;
 	move::Move _en_passant;
 };
 

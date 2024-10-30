@@ -9,7 +9,7 @@
 
 
 Board::Board() 
-: _prev_moves(std::vector<move::Move>{}), _en_passant(move::Move(0, 0, 0, 0)) {
+: _en_passant(move::Move(0, 0, 0, 0)) {
 	_board[0][0] = pieces::white | pieces::rook;
 	_board[0][1] = pieces::white | pieces::knight;
 	_board[0][2] = pieces::white | pieces::bishop;
@@ -44,7 +44,7 @@ Board::Board()
 }
 
 Board::Board(const Board& board, const move::Move& move)
-: _board(board.get_board()), _prev_moves(board.get_prev_moves()), _en_passant(board.get_en_passant()) {
+: _board(board.get_raw_board()), _en_passant(board.get_en_passant()) {
 	if (_en_passant.get_to_col() == move.get_to_col() && _en_passant.get_to_row() + 1 == move.get_to_row()) {
 		if (_board[move.get_from_row()][move.get_from_col()] == (pieces::white | pieces::pawn)) {
 			_board[_en_passant.get_to_row()][_en_passant.get_to_col()] = pieces::empty;
@@ -69,7 +69,6 @@ Board::Board(const Board& board, const move::Move& move)
 
 	_board[move.get_to_row()][move.get_to_col()] = _board[move.get_from_row()][move.get_from_col()];
 	_board[move.get_from_row()][move.get_from_col()] = pieces::empty;
-	_prev_moves.emplace_back(move);
 }
 
 void Board::print() const {
@@ -86,14 +85,7 @@ void Board::print() const {
 	std::println();
 }
 
-const std::vector<Board> Board::get_previous_boards() const {
-	return std::vector<Board>{};
-}
-
-const std::vector<move::Move> Board::get_prev_moves() const {
-	return _prev_moves;
-}
-const std::array<std::array<uint8_t, 8>, 8>& Board::get_board() const {
+const std::array<std::array<uint8_t, 8>, 8>& Board::get_raw_board() const {
 	return _board;
 }
 
@@ -178,9 +170,9 @@ bool Board::black_in_checkmate(const std::vector<move::Move>& moves) const {
 bool Board::operator <(const Board& rhs) const {
 	for (int row = 0; row < 8; ++row) {
 		for (int col = 0; col < 8; ++col) {
-			if (_board[row][col] < rhs.get_board()[row][col]) {
+			if (_board[row][col] < rhs.get_raw_board()[row][col]) {
 				return true;
-			} else if (_board[row][col] > rhs.get_board()[row][col]) {
+			} else if (_board[row][col] > rhs.get_raw_board()[row][col]) {
 				return false;
 			}
 		}

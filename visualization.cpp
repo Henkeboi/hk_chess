@@ -89,7 +89,7 @@ void visualization::update_visualization(const Board& board) {
 	for (int row = 0; row < 8; ++row) {
 		for (int col = 0; col < 8; ++col) {
 			int line_number = coordinate_to_line_number[std::to_string(row) + std::to_string(col)];
-			std::string image = piece_to_image[board.get_board()[row][col]];
+			std::string image = piece_to_image[board.get_raw_board()[row][col]];
 			replace_line(image, line_number);
 		}
 	}
