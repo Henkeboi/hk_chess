@@ -6,7 +6,7 @@
 #include <vector>
 
 namespace alpha_beta {
-	int alpha_beta(Board board, int depth, float alpha, float beta, bool maximizing_player, move::Move& best_move, const int start_depth);
+	int alpha_beta(const Board& board, int depth, int alpha, int beta, bool maximizing_player, move::Move& best_move, const int start_depth);
 
 }
 

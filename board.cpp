@@ -23,6 +23,12 @@ Board::Board()
 			_board[1][j] = pieces::white | pieces::pawn;
 	}
 
+	for (auto i = 2; i < 6; ++i) {
+		for (auto j = 0; j < 8; ++j) {
+			_board[i][j] = pieces::empty;
+		}
+	}
+
 	for (auto j = 0; j < 8; ++j) {
 			_board[6][j] = pieces::black | pieces::pawn;
 	}
@@ -35,12 +41,6 @@ Board::Board()
 	_board[7][5] = pieces::black | pieces::bishop;
 	_board[7][6] = pieces::black | pieces::knight;
 	_board[7][7] = pieces::black | pieces::rook;
-
-	for (auto i = 2; i < 6; ++i) {
-		for (auto j = 0; j < 8; ++j) {
-			_board[i][j] = pieces::empty;
-		}
-	}
 }
 
 Board::Board(const Board& board, const move::Move& move)

@@ -8,7 +8,7 @@
 #include <print>
 #include <iostream>
 
-int alpha_beta::alpha_beta(const Board node, int depth, float alpha, float beta, bool maximizing_player, move::Move& best_move, const int start_depth) {
+int alpha_beta::alpha_beta(const Board& node, int depth, int alpha, int beta, bool maximizing_player, move::Move& best_move, const int start_depth) {
 	if (maximizing_player) {
 		std::vector<move::Move> moves;
 		std::vector<Board> boards;
