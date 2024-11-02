@@ -2,9 +2,6 @@
 #include "pieces.hpp"
 
 #include <print>
-#include <random>
-#include <iostream>
-#include <limits>
 
 
 int eval::eval(const Board& board) {
@@ -23,7 +20,7 @@ int eval::eval(const Board& board) {
 			} else if (piece == (pieces::black | pieces::queen)) {
 				eval -= pieces::queen_value;
 			} else if (piece == (pieces::black | pieces::king)) {
-				eval -= 100000; 
+				eval -= pieces::king_value; 
 			} else if (piece == pieces::pawn) {
 				eval += pieces::pawn_value;
 			} else if (piece == pieces::knight) {
@@ -35,7 +32,7 @@ int eval::eval(const Board& board) {
 			} else if (piece == pieces::queen) {
 				eval += pieces::queen_value;
 			} else if (piece == pieces::king) {
-				eval += 100000;
+				eval += pieces::king_value;
 			}
 		}
 	}
