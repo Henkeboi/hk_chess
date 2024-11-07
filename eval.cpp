@@ -3,14 +3,39 @@
 
 #include <print>
 
+namespace eval {
 
-int eval::eval(const Board& board) {
+static const std::array<std::array<int, 8>, 8> white_pawn_square_values = {{
+{0, 5,    5,   0,  5,  10, 50, 0},
+{0, 10,  -5,  0,  5,  10, 50, 0},
+{0, 10,  -10, 0,  10, 20, 50, 0},
+{0, -20, 0,   20, 25, 30, 50, 0},
+{0, -20, 0,   20, 25, 30, 50, 0},
+{0, 10,  -10, 0,  10, 20, 50, 0},
+{0, 10,  -5,  0,  5,  10, 50, 0},
+{0, 5,   5,   0,  5,  10, 50, 0}}
+};
+
+
+static const std::array<std::array<int, 8>, 8> black_pawn_square_values = {{
+{0, 50, 10, 5,  0,  5,   5,   0},
+{0, 50, 10, 5,  0,  -5,  10,  0},
+{0, 50, 20, 10, 0,  -10, 10,  0},
+{0, 50, 30, 25, 20, 0,   -20, 0},
+{0, 50, 30, 25, 20, 0,   -20, 0},
+{0, 50, 20, 10, 0,  -10, 10,  0},
+{0, 50, 10, 5,  0,  -5,  10,  0},
+{0, 50, 10, 5,  0,  5,   5,   0}}
+};
+
+int eval(const Board& board) {
 	int eval = 0;
 	for (int row = 0; row < 8; ++row) {
 		for (int col = 0; col < 8; ++col) {
-			uint8_t piece = board.get_raw_board()[row][col];
+			pieces::piece piece = board.get_raw_board()[row][col];
 			if (piece == (pieces::black | pieces::pawn)) {
 				eval -= pieces::pawn_value;
+				eval -= black_pawn_square_values[row][col];
 			} else if (piece == (pieces::black | pieces::knight)) {
 				eval -= pieces::knight_value;
 			} else if (piece == (pieces::black | pieces::bishop)) {
@@ -23,6 +48,7 @@ int eval::eval(const Board& board) {
 				eval -= pieces::king_value; 
 			} else if (piece == pieces::pawn) {
 				eval += pieces::pawn_value;
+				eval += white_pawn_square_values[row][col];
 			} else if (piece == pieces::knight) {
 				eval += pieces::knight_value;
 			} else if (piece == pieces::bishop) {
@@ -36,19 +62,6 @@ int eval::eval(const Board& board) {
 			}
 		}
 	}
-
-	//std::vector<move::Move> white_moves;
-	//std::vector<Board> white_boards;
-	//board.get_white_moves(white_moves, white_boards);
-
-	//std::vector<move::Move> black_moves;
-	//std::vector<Board> black_boards;
-	//board.get_white_moves(black_moves, black_boards);
-
-	//eval += white_moves.size();
-	//eval -= black_moves.size();
-	//if (eval != 0) {
-	//	std::cout << eval << "\n";
-	//}
-	return 100 * eval;
+	return eval;
+}
 }
