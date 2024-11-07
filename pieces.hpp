@@ -18,12 +18,12 @@ namespace pieces {
 	color white = 0;
 	color black = 8;
 	
-	const int pawn_value = 1;
-	const int knight_value = 3;
-	const int bishop_value = 3;
-	const int rook_value = 5;
-	const int queen_value = 9;
-	const int king_value = 1000000;
+	const int pawn_value = 100;
+	const int knight_value = 320;
+	const int bishop_value = 330;
+	const int rook_value = 500;
+	const int queen_value = 900;
+	const int king_value = 20000;
 };
 
 #endif 
