@@ -22,6 +22,8 @@ public:
 	const move::Move& get_en_passant() const;
 private:
 	inline bool _square_has_white_piece(const uint8_t row, const uint8_t col) const;
+	inline bool _square_has_black_piece(const uint8_t row, const uint8_t col) const;
+	inline bool _square_is_empty(const uint8_t row, const uint8_t col) const;
 	inline void _get_white_pawn_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures) const;
 	inline void _get_white_knight_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures) const;
 	inline void _get_white_bishop_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures) const;
