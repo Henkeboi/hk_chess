@@ -13,10 +13,8 @@ jobs:
       matrix:
         compiler: [clang]
     steps:
-    - name: setup compiler
+    - name: compile
       run: |
         yes | wget -qO- https://apt.llvm.org/llvm.sh | bash -s -- 18
-    - name: compiler
+        make
     - uses: actions/checkout@v4
-    - name: make
-      run: make
