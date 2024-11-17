@@ -14,12 +14,10 @@ jobs:
         compiler: [clang]
     steps:
     - name: install compiler
-      run: yes | sudo wget -qO- https://apt.llvm.org/llvm.sh | sudo bash -s -- 18
-    - name: compile
       run: |
+        yes | sudo wget -qO- https://apt.llvm.org/llvm.sh | sudo bash -s -- 18
         ls
         which bash
         clang --version
-        ln -s "$(which bash)" /usr/bin/bash
         make
     - uses: actions/checkout@v4
