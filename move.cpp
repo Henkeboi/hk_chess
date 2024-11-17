@@ -10,6 +10,32 @@ Move::Move(uint8_t from_row, uint8_t from_col, uint8_t to_row, uint8_t to_col)
 	_to |= to_col; 
 }
 
+Move::Move(const Move& other)
+: _from(0), _to(0) {
+	_from |= other.get_from_row() << 3;
+	_from |= other.get_from_col();
+	_to |= other.get_to_row() << 3;
+	_to |= other.get_to_col(); 
+}
 
+move::Move& Move::operator=(const Move& other) {
+	_from = 0;
+	_to = 0;
+	_from |= other.get_from_row() << 3;
+	_from |= other.get_from_col();
+	_to |= other.get_to_row() << 3;
+	_to |= other.get_to_col(); 
+	return *this;
+}
+
+move::Move& Move::operator=(Move& other) {
+	_from = 0;
+	_to = 0;
+	_from |= other.get_from_row() << 3;
+	_from |= other.get_from_col();
+	_to |= other.get_to_row() << 3;
+	_to |= other.get_to_col(); 
+	return *this;
+}
 
 }
