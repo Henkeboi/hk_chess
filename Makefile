@@ -27,3 +27,6 @@ main: pieces.o eval.o move.o alpha_beta.o board.o visualization.o main.cpp
 
 clean:
 	rm -f build/main.o main build/pieces.o build/eval.o build/alpha_beta.o build/board.o build/move.o build/visualization.o
+
+
+$(info $(shell mkdir -p build))
