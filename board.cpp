@@ -1,9 +1,6 @@
 #import "board.hpp"
 #include "pieces.hpp"
 #include <print>
-#include <cstring>
-
-#include <chrono>
 
 #include <iostream>
 #include "assert.h"
@@ -351,7 +348,7 @@ inline void Board::_get_black_pawn_moves(uint8_t row, uint8_t col, std::vector<m
 			boards.push_back(Board{*this, moves.back(), pieces::empty});
 		}
 		// right take
-		if (col < 7 && _square_has_black_piece(row - 1, col + 1)) {
+		if (col < 7 && _square_has_white_piece(row - 1, col + 1)) {
 			moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row - 1), static_cast<uint8_t>(col + 1)});
 			boards.push_back(Board{*this, moves.back(), pieces::empty});
 		}
