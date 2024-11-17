@@ -1,9 +1,7 @@
 #ifndef __BOARD__HPP__
 #define __BOARD__HPP__
 
-
 #include "move.hpp"
-#include "pieces.hpp"
 
 #include <vector>
 #include <array>
@@ -11,7 +9,7 @@
 class Board {
 public:
 	Board();
-	Board(const Board& board, const move::Move& move, const pieces::piece& promotion_piece);
+	Board(const Board& board, const move::Move& move);
 	void print() const;
 	void get_white_moves(std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures) const;
 	void get_black_moves(std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures) const;
