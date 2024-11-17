@@ -4,7 +4,7 @@
 
 namespace eval {
 
-static const std::array<std::array<int, 8>, 8> white_pawn_square_values = {{
+static const std::array<std::array<int, 8>, 8> white_pawn_activity_values = {{
 	{0,  0,  0,   0,    0,   0,  0,  0},
 	{5,  10, 10,  -20,  -20, 10, 10, 5},
 	{5,  -5, -10, 0,    0,  -10, -5, 5},
@@ -15,7 +15,7 @@ static const std::array<std::array<int, 8>, 8> white_pawn_square_values = {{
 	{0,  0,  0,   0,    0,  0,   0,  0}
 }};
 
-static const std::array<std::array<int, 8>, 8> black_pawn_square_values = {{
+static const std::array<std::array<int, 8>, 8> black_pawn_activity_values = {{
 	{-0,  -0,  -0,   -0,   -0,  -0,  0,  0},
 	{-5,  -10, -10,  20,   20,  -10, 10, 5},
 	{-5,  5,   10,   -0,   -0,  10, -5, 5},
@@ -33,7 +33,7 @@ int eval(const Board& board) {
 			pieces::piece piece = board.get_raw_board()[row][col];
 			if (piece == (pieces::black | pieces::pawn)) {
 				eval -= pieces::pawn_value;
-				eval -= black_pawn_square_values[row][col];
+				eval -= black_pawn_activity_values[row][col];
 			} else if (piece == (pieces::black | pieces::knight)) {
 				eval -= pieces::knight_value;
 			} else if (piece == (pieces::black | pieces::bishop)) {
@@ -46,7 +46,7 @@ int eval(const Board& board) {
 				eval -= pieces::king_value; 
 			} else if (piece == pieces::pawn) {
 				eval += pieces::pawn_value;
-				eval += white_pawn_square_values[row][col];
+				eval += white_pawn_activity_values[row][col];
 			} else if (piece == pieces::knight) {
 				eval += pieces::knight_value;
 			} else if (piece == pieces::bishop) {
