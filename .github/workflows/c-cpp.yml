@@ -20,5 +20,6 @@ jobs:
         which bash
         clang-18 --version
         git clone https://github.com/Henkeboi/hk_chess
+        cd hk_chess
         make
     - uses: actions/checkout@v4
