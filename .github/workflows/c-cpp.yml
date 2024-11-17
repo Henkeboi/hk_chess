@@ -6,10 +6,6 @@ on:
   pull_request:
     branches: [ "master" ]
 
-strategy:
-	matrix:
-		compiler: [clang]
-
 jobs:
   build:
 
