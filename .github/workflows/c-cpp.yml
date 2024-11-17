@@ -13,8 +13,8 @@ jobs:
       matrix:
         compiler: [clang]
     steps:
+    - name: install compiler
+      run: yes | sudo wget -qO- https://apt.llvm.org/llvm.sh | sudo bash -s -- 18
     - name: compile
-      run: |
-        yes | sudo wget -qO- https://apt.llvm.org/llvm.sh | sudo bash -s -- 18
-        make
+      run: make
     - uses: actions/checkout@v4
