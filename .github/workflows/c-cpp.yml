@@ -8,10 +8,15 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        compiler: [clang]
     steps:
+    - name: setup compiler
+      run: |
+        yes | wget -qO- https://apt.llvm.org/llvm.sh | bash -s -- 18
+    - name: compiler
     - uses: actions/checkout@v4
     - name: make
       run: make
