@@ -16,5 +16,7 @@ jobs:
     - name: install compiler
       run: yes | sudo wget -qO- https://apt.llvm.org/llvm.sh | sudo bash -s -- 18
     - name: compile
-      run: make
+      run: |
+        pwd
+        make
     - uses: actions/checkout@v4
