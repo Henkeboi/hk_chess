@@ -3,7 +3,10 @@ CXXFLAGS = -lstdc++
 
 all: main 
 
-move.o: move.cpp
+pieces.o: pieces.cpp 
+	$(CXX) -c -o build/pieces.o pieces.cpp
+
+move.o: move.cpp 
 	$(CXX) -c -o build/move.o move.cpp
 
 board.o: board.cpp
@@ -19,8 +22,8 @@ visualization.o: visualization.cpp
 	$(CXX) -c -o build/visualization.o visualization.cpp
 
 
-main: eval.o move.o alpha_beta.o board.o visualization.o main.cpp
-	$(CXX) -o main main.cpp build/move.o build/board.o build/alpha_beta.o build/eval.o build/visualization.o $(CXXFLAGS)
+main: pieces.o eval.o move.o alpha_beta.o board.o visualization.o main.cpp
+	$(CXX) -o main main.cpp build/pieces.o build/move.o build/board.o build/alpha_beta.o build/eval.o build/visualization.o $(CXXFLAGS)
 
 clean:
-	rm -f build/main.o main build/eval.o build/alpha_beta.o build/board.o build/move.o build/visualization.o
+	rm -f build/main.o main build/pieces.o build/eval.o build/alpha_beta.o build/board.o build/move.o build/visualization.o
