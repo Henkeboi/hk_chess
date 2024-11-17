@@ -15,6 +15,6 @@ jobs:
     steps:
     - name: compile
       run: |
-        yes | wget -qO- https://apt.llvm.org/llvm.sh | bash -s -- 18
+        yes | sudo wget -qO- https://apt.llvm.org/llvm.sh | sudo bash -s -- 18
         make
     - uses: actions/checkout@v4
