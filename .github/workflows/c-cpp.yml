@@ -8,10 +8,18 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        compiler: [clang-18]
     steps:
+    - name: install compiler
+      run: |
+        yes | sudo wget -qO- https://apt.llvm.org/llvm.sh | sudo bash -s -- 18
+        ls
+        which bash
+        clang-18 --version
+        git clone https://github.com/Henkeboi/hk_chess
+        cd hk_chess
+        make
     - uses: actions/checkout@v4
-    - name: make
-      run: make
