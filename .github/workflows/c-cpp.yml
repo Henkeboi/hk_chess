@@ -15,7 +15,7 @@ jobs:
     steps:
     - name: install compiler
       run: |
-        yes | sudo wget -qO- https://apt.llvm.org/llvm.sh | sudo bash -s -- 18
+        yes | sudo wget -qO- https://apt.llvm.org/llvm.sh | sudo bash -s -- 18.1.8
         ls
         which bash
         clang-18 --version
