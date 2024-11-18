@@ -27,7 +27,7 @@ visualization.o: visualization.cpp
 	$(CXX) -c -o build/visualization.o visualization.cpp
 
 main: pieces.o eval.o move.o alpha_beta.o board.o visualization.o main.cpp
-	$(COMPILER) $(CXX) -o main main.cpp build/pieces.o build/move.o build/board.o build/alpha_beta.o build/eval.o build/visualization.o $(CXXFLAGS)
+	$(CXX) -o main main.cpp build/pieces.o build/move.o build/board.o build/alpha_beta.o build/eval.o build/visualization.o $(CXXFLAGS)
 
 clean:
 	rm -f build/main.o main build/pieces.o build/eval.o build/alpha_beta.o build/board.o build/move.o build/visualization.o
