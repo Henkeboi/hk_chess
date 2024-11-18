@@ -11,10 +11,10 @@
 int main() {
 	Board board {};
 	move::Move best_move{0, 0, 0, 0};
-	int white_depth = 5;
-	int black_depth = 5;
-	int white_timeout_ms = 2000;
-	int black_timeout_ms = 2000;
+	int white_depth = 4;
+	int black_depth = 4;
+	int white_timeout_ms = 5000;
+	int black_timeout_ms = 5000;
 	bool maximizing_player = true;
 
 	//for (int i = 0; i < 20; ++i) {
