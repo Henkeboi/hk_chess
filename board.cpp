@@ -45,6 +45,7 @@ Board::Board(const Board& board, const move::Move& move)
 	assert(move.get_from_col() < 8);
 	assert(move.get_to_row() < 8);
 	assert(move.get_to_col() < 8);
+	assert(_board[move.get_from_row()][move.get_from_col()] != pieces::empty);
 
 	if (move.get_to_row() == move.get_from_row()) {
 		if (move.get_to_col() == move.get_from_col()) {
