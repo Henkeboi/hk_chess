@@ -25,6 +25,9 @@ int alpha_beta(const Board& node, int depth, bool maximizing_player, move::Move&
 		
 		int evaluation = INT_MIN;
 		for (size_t i = 0; i < moves.size() && i < boards.size(); ++i) {
+			if (stop_token.stop_requested()) {
+				return INT_MAX;
+			}
 			const int new_evaluation = alpha_beta(boards[i], depth - 1, !maximizing_player, best_move, start_depth, stop_token, alpha, beta);
 			if (evaluation < new_evaluation) {
 				evaluation = new_evaluation;
@@ -53,6 +56,9 @@ int alpha_beta(const Board& node, int depth, bool maximizing_player, move::Move&
 
 		int evaluation = INT_MAX;
 		for (size_t i = 0; i < moves.size() && i < boards.size(); ++i) {
+			if (stop_token.stop_requested()) {
+				return INT_MIN;
+			}
 			const int new_evaluation = alpha_beta(boards[i], depth - 1, !maximizing_player, best_move, start_depth, stop_token, alpha, beta);
 			if (evaluation > new_evaluation) {
 				evaluation = new_evaluation;
@@ -66,16 +72,13 @@ int alpha_beta(const Board& node, int depth, bool maximizing_player, move::Move&
 }
 
 int alpha_beta_with_timeout(const Board& board, int depth, bool maximizing_player, move::Move& best_move, int timeout_ms) {
-	//return alpha_beta(board, depth, maximizing_player, best_move, depth);
-	
 	std::jthread alpha_beta_thread([&board, depth, maximizing_player, &best_move](std::stop_token stop_token) {
 		return alpha_beta(board, depth, maximizing_player, best_move, depth, stop_token);
 	});
 
 	std::this_thread::sleep_for(std::chrono::milliseconds(timeout_ms));
+	alpha_beta_thread.request_stop();
 	alpha_beta_thread.join();
-	//std::this_thread::sleep_for(std::chrono::milliseconds(timeout_ms));
-	//alpha_beta_thread.request_stop();
 	return 0;
 }
 
