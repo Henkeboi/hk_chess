@@ -5,21 +5,22 @@
 #include "visualization.hpp"
 #include <vector>
 #include <chrono>
-#include <pthread.h>
-
+#include <thread>
+#include <sys/resource.h>
 
 int main() {
 	Board board {};
 	move::Move best_move{0, 0, 0, 0};
 	int white_depth = 4;
 	int black_depth = 4;
+	int white_timeout_ms = 2000;
+	int black_timeout_ms = 2000;
 	bool maximizing_player = true;
 
 	for (int i = 0; i < 20; ++i) {
-		alpha_beta::alpha_beta(board, depth, maximizing_player, best_move, depth);
+		alpha_beta::alpha_beta_with_timeout(board, 5, maximizing_player, best_move, 1000);
 	}
 	return 0;
-
 	
 	bool is_game_finished = false;
 	while (!is_game_finished) {
