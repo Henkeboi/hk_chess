@@ -1,5 +1,5 @@
-CXX = clang-19 -std=c++23 -O3 -Wall -Wextra -g
-CXXFLAGS = -lstdc++
+CXX = clang-19 -std=c++23 -O3 -Wall -Wextra -g 
+CXXFLAGS = -lstdc++a -fexperimental-library
 
 all: main 
 
