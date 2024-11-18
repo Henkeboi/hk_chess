@@ -1,5 +1,4 @@
 #import "board.hpp"
-#include <print>
 
 #include <iostream>
 #include "assert.h"
@@ -86,14 +85,14 @@ void Board::print() const {
 	for (auto i = 7; i > -1; --i) {
 		for (auto j = 0; j < 8; ++j) {
 			if (_board[i][j] >= pieces::black) {
-				std::print("{:2} ", -(0b0111 & _board[i][j]));
+				std::cout << "-" << static_cast<int>(0b0111 & _board[i][j]) << " ";
 			} else {	
-				std::print("{:2} ", _board[i][j]);
+				std::cout << " " << static_cast<int>(_board[i][j]) << " ";
 			}
 		}
-		std::println();
+		std::cout << "\n";
 	}
-	std::println();
+	std::cout << "\n";
 }
 
 const std::array<std::array<uint8_t, 8>, 8>& Board::get_raw_board() const {

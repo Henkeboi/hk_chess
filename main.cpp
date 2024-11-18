@@ -1,5 +1,4 @@
 #include <iostream>
-#include <print>
 
 #include "board.hpp"
 #include "alpha_beta.hpp"
@@ -26,16 +25,16 @@ int main() {
 	while (!is_game_finished) {
 		visualization::update_visualization(board);
 		if (maximizing_player) {
-			std::println("White eval: {}", alpha_beta::alpha_beta(board, white_depth, maximizing_player, best_move, white_depth));
+			alpha_beta::alpha_beta_with_timeout(board, white_depth, maximizing_player, best_move, white_timeout_ms);
 		} else {
-			std::println("Black eval: {}", alpha_beta::alpha_beta(board, black_depth, maximizing_player, best_move, black_depth));
+			alpha_beta::alpha_beta_with_timeout(board, black_depth, maximizing_player, best_move, black_timeout_ms);
 		}
-		board = Board{board, best_move, 0};
+		board = Board{board, best_move};
 		is_game_finished = board.is_game_finished(!maximizing_player);
 		maximizing_player = !maximizing_player;
 	}
 
-	std::println("Game finished");
+	std::cout << "Game finished\n";
 
   return 0;
 }
