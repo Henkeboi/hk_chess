@@ -18,7 +18,7 @@ jobs:
         yes | sudo wget -qO- https://apt.llvm.org/llvm.sh | sudo bash -s -- 19
         ls
         which bash
-        clang-18 --version
+        clang-19 --version
         git clone https://github.com/Henkeboi/hk_chess
         cd hk_chess
         make
