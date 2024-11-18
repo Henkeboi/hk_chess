@@ -11,14 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        compiler: [clang-18]
+        compiler: [clang-19]
     steps:
     - name: install compiler
       run: |
-        yes | sudo wget -qO- https://apt.llvm.org/llvm.sh | sudo bash -s -- 18
+        yes | sudo wget -qO- https://apt.llvm.org/llvm.sh | sudo bash -s -- 19
         ls
         which bash
-        clang-18 --version
+        clang-19 --version
         git clone https://github.com/Henkeboi/hk_chess
         cd hk_chess
         make
