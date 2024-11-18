@@ -1,4 +1,4 @@
-CXX = clang-18 -std=c++23 -O3 -Wall -Wextra -g
+CXX = clang-19 -std=c++23 -O3 -Wall -Wextra -g
 CXXFLAGS = -lstdc++
 
 all: main 

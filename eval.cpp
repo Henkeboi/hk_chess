@@ -1,7 +1,5 @@
 #include "eval.hpp"
 
-#include <print>
-
 namespace eval {
 
 static const std::array<std::array<int, 8>, 8> white_pawn_activity_values = {{
