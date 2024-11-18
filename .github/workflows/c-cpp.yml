@@ -15,6 +15,7 @@ jobs:
     steps:
     - name: install compiler
       run: |
+        sudo apt-get install libc++-dev
         yes | sudo wget -qO- https://apt.llvm.org/llvm.sh | sudo bash -s -- 19
         ls
         which bash
