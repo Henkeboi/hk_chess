@@ -1,7 +1,8 @@
 #include "alpha_beta.hpp"
 #include "eval.hpp"
-#include <ranges>
 #include <chrono>
+#include <algorithm>
+#include <iostream>
 
 namespace alpha_beta {
 
@@ -9,10 +10,12 @@ int alpha_beta(const Board& node, int depth, bool maximizing_player, move::Move&
 	if (maximizing_player) {
 		std::vector<move::Move> moves;
 		std::vector<Board> boards;
-		if (depth > 0) {
+		if (depth > 0 && !stop_token.stop_requested()) {
 			node.get_white_moves(moves, boards, false);
 		} else {
-			// node.get_white_moves(moves, boards, true);
+			if (stop_token.stop_requested())
+				std::cout << "Search timeout\n";
+			node.get_white_moves(moves, boards, true);
 		}
 
 		if (node.black_in_checkmate(moves)) {
@@ -25,25 +28,28 @@ int alpha_beta(const Board& node, int depth, bool maximizing_player, move::Move&
 		
 		int evaluation = INT_MIN;
 		for (size_t i = 0; i < moves.size() && i < boards.size(); ++i) {
-			if (stop_token.stop_requested()) {
-				return INT_MAX;
-			}
 			const int new_evaluation = alpha_beta(boards[i], depth - 1, !maximizing_player, best_move, start_depth, stop_token, alpha, beta);
 			if (evaluation < new_evaluation) {
 				evaluation = new_evaluation;
 				if (depth == start_depth) {
 					best_move = moves[i];
 				}
+				if (evaluation > beta) {
+					break;
+				}
+				alpha = std::max(alpha, evaluation);
 			} 
 		}
 		return evaluation;
 	} else {
 		std::vector<move::Move> moves;
 		std::vector<Board> boards;
-		if (depth > 0) {
+		if (depth > 0 && !stop_token.stop_requested()) {
 			node.get_black_moves(moves, boards, false);
 		} else {
-			// node.get_black_moves(moves, boards, true);
+			if (stop_token.stop_requested())
+				std::cout << "Search timeout\n";
+			node.get_black_moves(moves, boards, true);
 		}
 
 		if (node.white_in_checkmate(moves)) {
@@ -56,15 +62,16 @@ int alpha_beta(const Board& node, int depth, bool maximizing_player, move::Move&
 
 		int evaluation = INT_MAX;
 		for (size_t i = 0; i < moves.size() && i < boards.size(); ++i) {
-			if (stop_token.stop_requested()) {
-				return INT_MIN;
-			}
 			const int new_evaluation = alpha_beta(boards[i], depth - 1, !maximizing_player, best_move, start_depth, stop_token, alpha, beta);
 			if (evaluation > new_evaluation) {
 				evaluation = new_evaluation;
 				if (depth == start_depth) {
 					best_move = moves[i];
 				}
+				if (evaluation < alpha) {
+					break;
+				}
+				beta = std::min(beta, evaluation);
 			}
 		}
 		return evaluation;
