@@ -95,8 +95,9 @@ _can_black_castle_queen_side(can_black_castle_queen_side()), _can_black_castle_k
 		}
 		
 		// Castling
-		if (_board[move.get_from_row()][move.get_from_col()] == pieces::king) {
-			if (move.get_from_col() > move.get_to_col()) { // Avoid negative numbers
+		if (_board[move.get_from_row()][move.get_from_col()] == (pieces::king | pieces::white)
+				|| _board[move.get_from_row()][move.get_from_col()] == (pieces::king | pieces::black)) {
+			if (move.get_from_col() > move.get_to_col()) { // Avoid negative numbers (uint)
 				if (move.get_from_col() - move.get_to_col() == 2) { // Queen side castle
 					_board[move.get_from_row()][3] = _board[move.get_from_row()][0];
 					_board[move.get_from_row()][0] = pieces::empty;
