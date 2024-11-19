@@ -18,6 +18,10 @@ public:
 	bool is_game_finished(bool white_to_move) const;
 	const std::array<std::array<uint8_t, 8>, 8>& get_raw_board() const;
 	const move::Move& get_en_passant() const;
+	bool can_white_castle_queen_side() const;
+	bool can_white_castle_king_side() const;
+	bool can_black_castle_queen_side() const;
+	bool can_black_castle_king_side() const;
 private:
 	inline bool _square_has_white_piece(const uint8_t row, const uint8_t col) const;
 	inline bool _square_has_black_piece(const uint8_t row, const uint8_t col) const;
@@ -34,6 +38,10 @@ private:
 	inline void _get_black_king_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures) const;
 	std::array<std::array<uint8_t, 8>, 8> _board;
 	move::Move _en_passant;
+	bool _can_white_castle_queen_side;
+	bool _can_white_castle_king_side;
+	bool _can_black_castle_queen_side;
+	bool _can_black_castle_king_side;
 };
 
 #endif 
