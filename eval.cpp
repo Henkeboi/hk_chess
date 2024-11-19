@@ -44,6 +44,57 @@ static const std::array<std::array<int, 8>, 8> black_knight_activity_values = {{
 	{-50, -40, -30, -30, -30, -30, -40, -50}
 }};
 
+static const std::array<std::array<int, 8>, 8> white_bishop_activity_values = {{
+	{-20, -10, -10, -10, -10, -10, -10, -20},
+	{-10,   5,   0,   0,   0,   0,   5, -10},
+	{-10,  10,  10,  10,  10,  10,  10, -10},
+	{-10,   0,  10,  10,  10,  10,   0, -10},
+	{-10,   5,   5,  10,  10,   5,   5, -10},
+	{-10,   0,   5,  10,  10,   5,   0, -10},
+	{-10,   0,   0,   0,   0,   0,   0, -10},
+	{-20, -10, -10, -10, -10, -10, -10, -20}
+}};
+
+static const std::array<std::array<int, 8>, 8> black_bishop_activity_values = {{
+	{-20, -10, -10, -10, -10, -10, -10, -20},
+	{-10,   0,   0,   0,   0,   0,   0, -10},
+	{-10,   0,   5,  10,  10,   5,   0, -10},
+	{-10,   5,   5,  10,  10,   5,   5, -10},
+	{-10,   0,  10,  10,  10,  10,   0, -10},
+	{-10,  10,  10,  10,  10,  10,  10, -10},
+	{-10,   5,   0,   0,   0,   0,   5, -10},
+	{-20, -10, -10, -10, -10, -10, -10, -20}
+}};
+
+static const std::array<std::array<int, 8>, 8> white_rook_activity_values = {{
+ { 0,  0,  0,  5,  5,  0,  0,  0},
+ {-5,  0,  0,  0,  0,  0,  0, -5},
+ {-5,  0,  0,  0,  0,  0,  0, -5},
+ {-5,  0,  0,  0,  0,  0,  0, -5},
+ {-5,  0,  0,  0,  0,  0,  0, -5},
+ {-5,  0,  0,  0,  0,  0,  0, -5},
+ { 5, 10, 10, 10, 10, 10, 10,  5},
+ { 0,  0,  0,  0,  0,  0,  0,  0}
+}};
+
+static const std::array<std::array<int, 8>, 8> black_rook_activity_values = {{
+ { 0,  0,  0,  0,  0,  0,  0,  0},
+ { 5, 10, 10, 10, 10, 10, 10,  5},
+ {-5,  0,  0,  0,  0,  0,  0, -5},
+ {-5,  0,  0,  0,  0,  0,  0, -5},
+ {-5,  0,  0,  0,  0,  0,  0, -5},
+ {-5,  0,  0,  0,  0,  0,  0, -5},
+ {-5,  0,  0,  0,  0,  0,  0, -5},
+ { 0,  0,  0,  5,  5,  0,  0,  0}
+}};
+
+
+
+
+
+
+
+
 static const std::array<std::array<int, 8>, 8> white_king_activity_values = {{
 	{ 20,  30,  10,   0,   0,  10,  30,  20},
 	{ 20,  20,   0,   0,   0,   0,  20,  20},
@@ -66,6 +117,10 @@ static const std::array<std::array<int, 8>, 8> black_king_activity_values = {{
 	{ 20,  30,  10,   0,   0,  10,  30,  20}
 }};
 
+
+const int queen_side_castling_right_value = 20;
+const int king_side_castling_right_value = 20;
+
 namespace eval {
 
 int eval(const Board& board) {
@@ -81,8 +136,10 @@ int eval(const Board& board) {
 				eval -= black_knight_activity_values[row][col];
 			} else if (piece == (pieces::black | pieces::bishop)) {
 				eval -= pieces::bishop_value;
+				eval -= black_bishop_activity_values[row][col];
 			} else if (piece == (pieces::black | pieces::rook)) {
 				eval -= pieces::rook_value;
+				eval -= black_rook_activity_values[row][col];
 			} else if (piece == (pieces::black | pieces::queen)) {
 				eval -= pieces::queen_value;
 			} else if (piece == (pieces::black | pieces::king)) {
@@ -96,8 +153,10 @@ int eval(const Board& board) {
 				eval += white_knight_activity_values[row][col];
 			} else if (piece == pieces::bishop) {
 				eval += pieces::bishop_value;
+				eval += white_bishop_activity_values[row][col];
 			} else if (piece == pieces::rook) {
 				eval += pieces::rook_value;
+				eval += white_rook_activity_values[row][col];
 			} else if (piece == pieces::queen) {
 				eval += pieces::queen_value;
 			} else if (piece == pieces::king) {
@@ -106,6 +165,20 @@ int eval(const Board& board) {
 			}
 		}
 	}
+	
+	if (board.can_white_castle_queen_side()) {
+		eval += queen_side_castling_right_value;
+	}
+	if (board.can_white_castle_king_side()) {
+		eval += king_side_castling_right_value;
+	}
+	if (board.can_black_castle_queen_side()) {
+		eval -= queen_side_castling_right_value;
+	}
+	if (board.can_black_castle_king_side()) {
+		eval -= king_side_castling_right_value;
+	}
+
 	return eval;
 }
 
