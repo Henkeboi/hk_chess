@@ -1,5 +1,5 @@
-#ifndef __ALPHA__BETA__HPP__
-#define __ALPHA__BETA__HPP__
+#ifndef __SEARCH__HPP__
+#define __SEARCH__HPP__
 
 #include "board.hpp"
 
