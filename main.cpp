@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "board.hpp"
-#include "alpha_beta.hpp"
+#include "search.hpp"
 #include "visualization.hpp"
 #include <vector>
 #include <chrono>
@@ -26,9 +26,9 @@ int main() {
 	while (!is_game_finished) {
 		visualization::update_visualization(board);
 		if (maximizing_player) {
-			alpha_beta::alpha_beta_with_timeout(board, white_depth, maximizing_player, best_move, white_timeout_ms);
+			search::alpha_beta_with_timeout(board, white_depth, maximizing_player, best_move, white_timeout_ms);
 		} else {
-			alpha_beta::alpha_beta_with_timeout(board, black_depth, maximizing_player, best_move, black_timeout_ms);
+			search::alpha_beta_with_timeout(board, black_depth, maximizing_player, best_move, black_timeout_ms);
 		}
 		board = Board{board, best_move};
 		is_game_finished = board.is_game_finished(!maximizing_player);

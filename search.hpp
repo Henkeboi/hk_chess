@@ -4,16 +4,18 @@
 #include "board.hpp"
 
 namespace {
-	class search_statistics {
+	class SearchStatistics {
 		public:
-		search_statistics();
+		SearchStatistics();
 		bool timeout_exceeded;
-			
+		int evaluation;
+		int positions_evaluated;
+		int positions_generated;
 	};
 }
 
 namespace search {
-	int alpha_beta_with_timeout(const Board& board, int depth, bool maximizing_player, move::Move& best_move, int timeout);
+	void alpha_beta_with_timeout(const Board& board, int depth, bool maximizing_player, move::Move& best_move, int timeout);
 }
 
 #endif // __MINMAX__HPP__
