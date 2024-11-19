@@ -11,8 +11,8 @@ public:
 	Board();
 	Board(const Board& board, const move::Move& move);
 	void print() const;
-	void get_white_moves(std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures) const;
-	void get_black_moves(std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures) const;
+	void get_white_moves(std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures, bool check_castle=true) const;
+	void get_black_moves(std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures, bool check_castle=true) const;
 	bool white_in_checkmate(const std::vector<move::Move>& moves) const;
 	bool black_in_checkmate(const std::vector<move::Move>& moves) const;
 	bool is_game_finished(bool white_to_move) const;
@@ -30,12 +30,12 @@ private:
 	inline void _get_white_knight_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures) const;
 	inline void _get_white_bishop_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures) const;
 	inline void _get_white_rook_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures) const;
-	inline void _get_white_king_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures) const;
+	inline void _get_white_king_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures, bool check_castle) const;
 	inline void _get_black_pawn_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captuer) const;
 	inline void _get_black_knight_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures) const;
 	inline void _get_black_bishop_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures) const;
 	inline void _get_black_rook_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures) const;
-	inline void _get_black_king_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures) const;
+	inline void _get_black_king_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures, bool check_castle) const;
 	std::array<std::array<uint8_t, 8>, 8> _board;
 	move::Move _en_passant;
 	bool _can_white_castle_queen_side;

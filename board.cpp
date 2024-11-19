@@ -153,7 +153,7 @@ bool Board::can_black_castle_king_side() const {
 	return _can_black_castle_king_side;
 }
 
-void Board::get_white_moves(std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures) const {
+void Board::get_white_moves(std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures, bool check_castle) const {
 for (uint8_t row = 0; row < 8; ++row) {
 		for (uint8_t col = 0; col < 8; ++col) {
 			switch (_board[row][col]) {
@@ -174,15 +174,14 @@ for (uint8_t row = 0; row < 8; ++row) {
 					_get_white_bishop_moves(row, col, moves, boards, only_captures);
 					break;
 				case (pieces::white | pieces::king):
-					_get_white_king_moves(row, col, moves, boards, only_captures);
+					_get_white_king_moves(row, col, moves, boards, only_captures, check_castle);
 					break;
 			}
 		}
 	}
 }
 
-
-void Board::get_black_moves(std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures) const {
+void Board::get_black_moves(std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures, bool check_castle) const {
 for (uint8_t row = 0; row < 8; ++row) {
 		for (uint8_t col = 0; col < 8; ++col) {
 			switch (_board[row][col]) {
@@ -203,7 +202,7 @@ for (uint8_t row = 0; row < 8; ++row) {
 					_get_black_bishop_moves(row, col, moves, boards, only_captures);
 					break;
 				case (pieces::black | pieces::king):
-					_get_black_king_moves(row, col, moves, boards, only_captures);
+					_get_black_king_moves(row, col, moves, boards, only_captures, check_castle);
 					break;
 			}
 		}
@@ -909,7 +908,7 @@ inline void Board::_get_black_rook_moves(uint8_t row, uint8_t col, std::vector<m
 	}(row, col);
 }
 
-inline void Board::_get_white_king_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures) const {
+inline void Board::_get_white_king_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures, bool check_castle) const {
 	if (row + 1 < 8) {
 		if (_square_is_empty(row + 1, col) && !only_captures) {
 			moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row + 1), static_cast<uint8_t>(col)});
@@ -985,51 +984,53 @@ inline void Board::_get_white_king_moves(uint8_t row, uint8_t col, std::vector<m
 			}
 		}
 	}
-	// Queen side castle
-	if (!only_captures && _can_white_castle_queen_side) {
-		if (_square_is_empty(0, 1) && _square_is_empty(0, 2) && _square_is_empty(0, 3)) {
-			std::vector<move::Move> next_moves;
-			std::vector<Board> next_boards;
-			get_black_moves(next_moves, next_boards, false);
-			bool castling_square_attacked = false;
-			for (const auto& move : next_moves) {
-				if (move.get_to_row() == 0) {
-					if (move.get_to_col() == 2 || move.get_to_col() == 3 || move.get_to_col() == 4) {
-						castling_square_attacked = true;
-						break;
+	if (check_castle) {
+		// Queen side castle
+		if (!only_captures && _can_white_castle_queen_side) {
+			if (_square_is_empty(0, 1) && _square_is_empty(0, 2) && _square_is_empty(0, 3)) {
+				std::vector<move::Move> next_moves;
+				std::vector<Board> next_boards;
+				get_black_moves(next_moves, next_boards, false, false);
+				bool castling_square_attacked = false;
+				for (const auto& move : next_moves) {
+					if (move.get_to_row() == 0) {
+						if (move.get_to_col() == 2 || move.get_to_col() == 3 || move.get_to_col() == 4) {
+							castling_square_attacked = true;
+							break;
+						}
 					}
 				}
-			}
-			if (!castling_square_attacked) {
-				moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(0), static_cast<uint8_t>(2)});
-				boards.push_back(Board{*this, moves.back()});
+				if (!castling_square_attacked) {
+					moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(0), static_cast<uint8_t>(2)});
+					boards.push_back(Board{*this, moves.back()});
+				}
 			}
 		}
-	}
-	// King side castle
-	if (!only_captures && _can_white_castle_king_side) {
-		if (_square_is_empty(0, 5) && _square_is_empty(0, 6)) {
-			std::vector<move::Move> next_moves;
-			std::vector<Board> next_boards;
-			get_black_moves(next_moves, next_boards, false);
-			bool castling_square_attacked = false;
-			for (const auto& move : next_moves) {
-				if (move.get_to_row() == 0) {
-					if (move.get_to_col() == 4 || move.get_to_col() == 5 || move.get_to_col() == 6) {
-						castling_square_attacked = true;
-						break;
+		// King side castle
+		if (!only_captures && _can_white_castle_king_side) {
+			if (_square_is_empty(0, 5) && _square_is_empty(0, 6)) {
+				std::vector<move::Move> next_moves;
+				std::vector<Board> next_boards;
+				get_black_moves(next_moves, next_boards, false, false);
+				bool castling_square_attacked = false;
+				for (const auto& move : next_moves) {
+					if (move.get_to_row() == 0) {
+						if (move.get_to_col() == 4 || move.get_to_col() == 5 || move.get_to_col() == 6) {
+							castling_square_attacked = true;
+							break;
+						}
 					}
 				}
-			}
-			if (!castling_square_attacked) {
-				moves.emplace_back(move::Move{row, col, 0, static_cast<uint8_t>(6)});
-				boards.push_back(Board{*this, moves.back()});
+				if (!castling_square_attacked) {
+					moves.emplace_back(move::Move{row, col, 0, static_cast<uint8_t>(6)});
+					boards.push_back(Board{*this, moves.back()});
+				}
 			}
 		}
 	}
 }	
 
-inline void Board::_get_black_king_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures) const {
+inline void Board::_get_black_king_moves(uint8_t row, uint8_t col, std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures, bool check_castle) const {
 	if (row + 1 < 8) {
 		if (_square_is_empty(row + 1, col) && !only_captures) {
 			moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row + 1), static_cast<uint8_t>(col)});
@@ -1105,45 +1106,47 @@ inline void Board::_get_black_king_moves(uint8_t row, uint8_t col, std::vector<m
 			}
 		}
 	}
-	// Queen side castle
-	if (!only_captures && _can_black_castle_queen_side) {
-		if (_square_is_empty(7, 1) && _square_is_empty(7, 2) && _square_is_empty(7, 3)) {
-			std::vector<move::Move> next_moves;
-			std::vector<Board> next_boards;
-			get_white_moves(next_moves, next_boards, false);
-			bool castling_square_attacked = false;
-			for (const auto& move : next_moves) {
-				if (move.get_to_row() == 7) {
-					if (move.get_to_col() == 2 || move.get_to_col() == 3 || move.get_to_col() == 4) {
-						castling_square_attacked = true;
-						break;
+	if (check_castle) {
+		// Queen side castle
+		if (!only_captures && _can_black_castle_queen_side) {
+			if (_square_is_empty(7, 1) && _square_is_empty(7, 2) && _square_is_empty(7, 3)) {
+				std::vector<move::Move> next_moves;
+				std::vector<Board> next_boards;
+				get_white_moves(next_moves, next_boards, false, false);
+				bool castling_square_attacked = false;
+				for (const auto& move : next_moves) {
+					if (move.get_to_row() == 7) {
+						if (move.get_to_col() == 2 || move.get_to_col() == 3 || move.get_to_col() == 4) {
+							castling_square_attacked = true;
+							break;
+						}
 					}
 				}
-			}
-			if (!castling_square_attacked) {
-				moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(7), static_cast<uint8_t>(2)});
-				boards.push_back(Board{*this, moves.back()});
+				if (!castling_square_attacked) {
+					moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(7), static_cast<uint8_t>(2)});
+					boards.push_back(Board{*this, moves.back()});
+				}
 			}
 		}
-	}
-	// King side castle
-	if (!only_captures && _can_black_castle_king_side) {
-		if (_square_is_empty(7, 5) && _square_is_empty(7, 6)) {
-			std::vector<move::Move> next_moves;
-			std::vector<Board> next_boards;
-			get_white_moves(next_moves, next_boards, false);
-			bool castling_square_attacked = false;
-			for (const auto& move : next_moves) {
-				if (move.get_to_row() == 7) {
-					if (move.get_to_col() == 4 || move.get_to_col() == 5 || move.get_to_col() == 6) {
-						castling_square_attacked = true;
-						break;
+		// King side castle
+		if (!only_captures && _can_black_castle_king_side) {
+			if (_square_is_empty(7, 5) && _square_is_empty(7, 6)) {
+				std::vector<move::Move> next_moves;
+				std::vector<Board> next_boards;
+				get_white_moves(next_moves, next_boards, false, false);
+				bool castling_square_attacked = false;
+				for (const auto& move : next_moves) {
+					if (move.get_to_row() == 7) {
+						if (move.get_to_col() == 4 || move.get_to_col() == 5 || move.get_to_col() == 6) {
+							castling_square_attacked = true;
+							break;
+						}
 					}
 				}
-			}
-			if (!castling_square_attacked) {
-				moves.emplace_back(move::Move{row, col, 7, static_cast<uint8_t>(6)});
-				boards.push_back(Board{*this, moves.back()});
+				if (!castling_square_attacked) {
+					moves.emplace_back(move::Move{row, col, 7, static_cast<uint8_t>(6)});
+					boards.push_back(Board{*this, moves.back()});
+				}
 			}
 		}
 	}
