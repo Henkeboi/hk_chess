@@ -2,7 +2,6 @@
 #define __MOVE__HPP__
 
 #include "pieces.hpp"
-#include <stdint.h>
 
 namespace move {
 	class Move {
