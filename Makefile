@@ -5,7 +5,7 @@ CXXFLAGS = -lstdc++
 ubuntu: CXX = clang-19 -std=c++23 -O3 -Wall -Wextra -Werror
 ubuntu: main
 
-debug: CXX = clang-18 -std=c++23 -g -O0 -Wall -Wextra
+debug: CXX = clang-18 -std=c++23 -g -O0 -Wall -Wextra -fsanitize=bounds -fsanitize=address -fsanitize=leak
 debug: main
 
 pieces.o: pieces.cpp 
