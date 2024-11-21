@@ -7,8 +7,8 @@
 class Zobrist {
 	public:
 	Zobrist(const Board& board, const bool white_to_move);
-	uint64_t get_zobrist_hash() const;
-	uint64_t update_zobrist_hash(const Board& board_to_hash, const Board& previous_board, const move::Move& last_move);
+	uint64_t get_initial_zobrist_hash() const;
+	uint64_t new_zobrist_hash(const Board& board_to_hash, const Board& previous_board, const move::Move& last_move, uint64_t previous_zobrist_hash) const;
 	private:
 	std::mt19937_64::result_type _get_random_number();
 	void _init_zobrist_hash(const Board& board, const bool white_to_move);
@@ -19,7 +19,7 @@ class Zobrist {
 	uint64_t _can_black_castle_queen_side_bits;
 	uint64_t _can_black_castle_king_side_bits;
 	uint64_t _white_to_move_bits;
-	uint64_t _zobrist_hash;
+	uint64_t _initial_zobrist_hash;
 	std::uniform_int_distribution<std::mt19937_64::result_type> _uniform_distribution;
 	std::mt19937_64 _rng;
 	const uint8_t _white_pawn_index = 0;
