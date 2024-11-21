@@ -3,7 +3,6 @@
 #include <iostream>
 #include "assert.h"
 
-
 Board::Board() 
 : _en_passant(move::Move(10, 10, 10, 10)), _can_white_castle_queen_side(true), _can_white_castle_king_side(true),
 _can_black_castle_queen_side(true), _can_black_castle_king_side(true) {
@@ -155,7 +154,7 @@ bool Board::can_black_castle_king_side() const {
 }
 
 void Board::get_white_moves(std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures, bool check_castle) const {
-for (uint8_t row = 0; row < 8; ++row) {
+	for (uint8_t row = 0; row < 8; ++row) {
 		for (uint8_t col = 0; col < 8; ++col) {
 			switch (_board[row][col]) {
 				case (pieces::white | pieces::pawn):
