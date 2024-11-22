@@ -41,8 +41,10 @@ _can_black_castle_queen_side(true), _can_black_castle_king_side(true) {
 
 Board::Board(const Board& board, const move::Move& move)
 : _board(board.get_raw_board()), _en_passant(board.get_en_passant()),
- _can_white_castle_queen_side(board.can_white_castle_queen_side()), _can_white_castle_king_side(can_white_castle_king_side()),
-_can_black_castle_queen_side(can_black_castle_queen_side()), _can_black_castle_king_side(can_black_castle_king_side()) {
+	_can_white_castle_queen_side(board.can_white_castle_queen_side()),
+	_can_white_castle_king_side(board.can_white_castle_king_side()),
+	_can_black_castle_queen_side(board.can_black_castle_queen_side()),
+	_can_black_castle_king_side(board.can_black_castle_king_side()) {
 	assert(move.get_from_row() < 8);
 	assert(move.get_from_col() < 8);
 	assert(move.get_to_row() < 8);
@@ -92,7 +94,7 @@ _can_black_castle_queen_side(can_black_castle_queen_side()), _can_black_castle_k
 			_can_black_castle_queen_side = false;
 			_can_black_castle_king_side = false;
 		}
-		
+
 		// Castling
 		if (_board[move.get_from_row()][move.get_from_col()] == (pieces::king | pieces::white)
 				|| _board[move.get_from_row()][move.get_from_col()] == (pieces::king | pieces::black)) {
@@ -470,7 +472,7 @@ inline void Board::_get_white_knight_moves(uint8_t row, uint8_t col, std::vector
 					moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row - 1), static_cast<uint8_t>(col + 2)});
 					boards.push_back(Board{*this, moves.back()});
 				}
-			} else if (_square_has_white_piece(row - 1, col + 2)) {
+			} else if (!_square_has_white_piece(row - 1, col + 2)) {
 				moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row - 1), static_cast<uint8_t>(col + 2)});
 				boards.push_back(Board{*this, moves.back()});
 			}
