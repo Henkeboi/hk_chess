@@ -33,6 +33,6 @@ main: pieces.o eval.o zobrist.o move.o search.o board.o visualization.o main.cpp
 	$(CXX) -o main main.cpp build/pieces.o build/move.o build/board.o build/search.o build/eval.o build/zobrist.o build/visualization.o $(CXXFLAGS)
 
 clean:
-	rm -f build/main.o main build/pieces.o build/eval.o build/search.o build/board.o build/move.o build/visualization.o
+	rm -f build/main.o main build/pieces.o build/eval.o build/search.o build/board.o build/move.o build/visualization.o build/zobrist.o
 
 $(info $(shell mkdir -p build))
