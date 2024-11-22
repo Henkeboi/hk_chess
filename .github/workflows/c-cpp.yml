@@ -23,6 +23,7 @@ jobs:
     - name: unit_tests
       run: |
         cd hk_chess
+        sudo apt-get update
         sudo apt-get install libgtest0 libgtest-dev -y
         make ubuntu -C tests/board_test
         tests/board_test/main
