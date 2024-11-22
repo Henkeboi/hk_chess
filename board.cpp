@@ -59,22 +59,20 @@ Board::Board(const Board& board, const move::Move& move)
 		
 	if (move.get_promotion_piece() == 0) {
 		// En passant
-		if (_en_passant.get_to_col() == move.get_to_col() && _en_passant.get_to_row() + 1 == move.get_to_row()) {
-			if (_board[move.get_from_row()][move.get_from_col()] == (pieces::white | pieces::pawn)) {
-				_board[_en_passant.get_to_row()][_en_passant.get_to_col()] = pieces::empty;
-			}
-		} else if (_en_passant.get_to_col() == move.get_to_col() && _en_passant.get_to_row() - 1 == move.get_to_row()) {
-			if (_board[move.get_from_row()][move.get_from_col()] == (pieces::black | pieces::pawn)) {
-				_board[_en_passant.get_to_row()][_en_passant.get_to_col()] = pieces::empty;
-			}
-		}	else if (move.get_from_row() == 1 && move.get_to_row() == 3) {
-			if (_board[move.get_from_row()][move.get_from_col()] == (pieces::white | pieces::pawn)) {	
+		if (_en_passant.get_to_col() == move.get_to_col()
+				&& _en_passant.get_to_row() + 1 == move.get_to_row()
+				&& _board[move.get_from_row()][move.get_from_col()] == (pieces::white | pieces::pawn)) {
+					_board[_en_passant.get_to_row()][_en_passant.get_to_col()] = pieces::empty;
+		} else if (_en_passant.get_to_col() == move.get_to_col()
+				&& _en_passant.get_to_row() - 1 == move.get_to_row()
+				&& (_board[move.get_from_row()][move.get_from_col()] == (pieces::black | pieces::pawn))) {
+					_board[_en_passant.get_to_row()][_en_passant.get_to_col()] = pieces::empty;
+		}	else if (move.get_from_row() == 1 && move.get_to_row() == 3 
+				&& (_board[move.get_from_row()][move.get_from_col()] == (pieces::white | pieces::pawn))) {	
+					_en_passant = move;
+		}	else if (move.get_from_row() == 6 && move.get_to_row() == 4
+				&& (_board[move.get_from_row()][move.get_from_col()] == (pieces::black | pieces::pawn))) {	
 				_en_passant = move;
-			}
-		}	else if (move.get_from_row() == 6 && move.get_to_row() == 4) {
-			if (_board[move.get_from_row()][move.get_from_col()] == (pieces::black | pieces::pawn)) {	
-				_en_passant = move;
-			}
 		} else {
 				_en_passant = move::Move{10, 10, 10, 10, 0};
 		}
