@@ -13,11 +13,18 @@ jobs:
       matrix:
         compiler: [clang-19]
     steps:
-    - name: install compiler
+    - name: compile
       run: |
         sudo apt-get install libc++-dev
         yes | sudo wget -qO- https://apt.llvm.org/llvm.sh | sudo bash -s -- 19
         git clone https://github.com/Henkeboi/hk_chess
         cd hk_chess
         make ubuntu
+    - name: unit_tests
+      run: |
+        cd hk_chess
+        sudo apt-get update
+        sudo apt-get install libgtest-dev libtool autoconf build-essential pkg-config automake tcsh -y 
+        make ubuntu -C tests/board_test
+        tests/board_test/main
     - uses: actions/checkout@v4
