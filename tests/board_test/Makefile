@@ -1,6 +1,6 @@
 all: main 
 CXX = clang-18 -std=c++23 -O3 -Wall -Wextra
-CXXFLAGS = -lstdc++ -lgtest -L /usr/local/include
+CXXFLAGS = -lstdc++ -pthread -lgtest -L /usr/local/include
 
 ubuntu: CXX = clang-19 -std=c++23 -O3 -Wall -Wextra -Werror
 ubuntu: main
