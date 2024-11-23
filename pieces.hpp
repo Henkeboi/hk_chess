@@ -1,11 +1,11 @@
-#ifndef __PIECES__HPP__
-#define __PIECES__HPP__
+#ifndef PIECES_HPP_
+#define PIECES_HPP_
 
-#include <stdint.h>
+#include <cstdint>
 
 namespace pieces {
-	typedef const uint8_t color;
-	typedef const uint8_t piece;
+	using color = const uint8_t;
+	using piece = const uint8_t;
 
 	piece empty = 0;
 	piece pawn = 1;
