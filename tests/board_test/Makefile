@@ -8,20 +8,20 @@ ubuntu: main
 debug: CXX = clang-18 -std=c++23 -g -O0 -Wall -Wextra -fsanitize=bounds -fsanitize=address -fsanitize=leak
 debug: main
 
-pieces.o: ../../pieces.cpp 
+build/pieces.o: ../../pieces.cpp 
 	$(CXX) -c -o build/pieces.o ../../pieces.cpp
 
-move.o: ../../move.cpp 
+build/move.o: ../../move.cpp 
 	$(CXX) -c -o build/move.o ../../move.cpp
 
-board.o: ../../board.cpp
+build/board.o: ../../board.cpp
 	$(CXX) -c -o build/board.o ../../board.cpp 
 
-board_test.o: ../../board_test.cpp
+build/board_test.o: ../../board_test.cpp
 	$(CXX) -c -o build/board_test.o ../../board_test.cpp
 
-main: ../../pieces.o  ../../move.o ../../search.o ../../board.o ../../main.cpp
-	$(CXX) -o main ../../main.cpp build/pieces.o build/move.o build/board.o  $(CXXFLAGS)
+main: build/pieces.o build/move.o build/board.o main.cpp
+	$(CXX) -o main main.cpp build/pieces.o build/move.o build/board.o  $(CXXFLAGS)
 
 clean:
 	rm -f main build/main.o build/pieces.o build/board.o build/move.o build/test_board.o

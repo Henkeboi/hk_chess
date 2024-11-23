@@ -1,4 +1,4 @@
-#include "../board.hpp"
+#include "../../board.hpp"
 #include <gtest/gtest.h>
 
 void test_find_moves_first_position(Board board);
