@@ -1,4 +1,5 @@
 #include "move.hpp"
+#include <iostream>
 
 namespace move {
 
@@ -16,6 +17,10 @@ Move::Move(const Move& other)
 	_from |= other.get_from_col();
 	_to |= other.get_to_row() << 3;
 	_to |= other.get_to_col(); 
+}
+
+void Move::print() const {
+	std::cout << static_cast<int>(get_from_row()) << ", " << static_cast<int>(get_from_col()) << ", " << static_cast<int>(get_to_row()) << ", " << static_cast<int>(get_to_col()) << "\n";
 }
 
 move::Move& Move::operator=(const Move& other) {

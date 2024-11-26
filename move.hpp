@@ -1,5 +1,5 @@
-#ifndef __MOVE__HPP__
-#define __MOVE__HPP__
+#ifndef MOVE_HPP_
+#define MOVE_HPP_
 
 #include "pieces.hpp"
 
@@ -10,11 +10,13 @@ namespace move {
 		Move(const Move& other);
 		Move& operator=(const Move& other);
 		Move& operator=(Move& other);
-		inline uint8_t get_from_row() const { return _from >> 3; }
-		inline uint8_t get_from_col() const { return _from & 0b000111; }
-		inline uint8_t get_to_row() const { return _to >> 3; }
-		inline uint8_t get_to_col() const { return _to & 0b000111; }
-		inline uint8_t get_promotion_piece() const { return _promotion_piece; }
+		~Move() = default;
+		void print() const;
+		[[nodiscard]] inline auto get_from_row() const { return _from >> 3; }
+		[[nodiscard]] inline auto get_from_col() const { return _from & 0b000111; }
+		[[nodiscard]] inline auto get_to_row() const { return _to >> 3; }
+		[[nodiscard]] inline auto get_to_col() const { return _to & 0b000111; }
+		[[nodiscard]] inline auto get_promotion_piece() const { return _promotion_piece; }
 	private:
 		uint8_t _from;
 		uint8_t _to;
