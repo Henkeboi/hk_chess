@@ -129,27 +129,27 @@ void Board::print() const {
 	std::cout << "\n";
 }
 
-const std::array<std::array<uint8_t, 8>, 8>& Board::get_raw_board() const {
+[[nodiscard]] const std::array<std::array<uint8_t, 8>, 8>& Board::get_raw_board() const {
 	return _board;
 }
 
-const move::Move& Board::get_en_passant() const {
+[[nodiscard]] const move::Move& Board::get_en_passant() const {
 	return _en_passant;
 }
 
-bool Board::can_white_castle_queen_side() const {
+[[nodiscard]] bool Board::can_white_castle_queen_side() const {
 	return _can_white_castle_queen_side;
 }
 
-bool Board::can_white_castle_king_side() const {
+[[nodiscard]] bool Board::can_white_castle_king_side() const {
 	return _can_white_castle_king_side;
 }
 
-bool Board::can_black_castle_queen_side() const {
+[[nodiscard]] bool Board::can_black_castle_queen_side() const {
 	return _can_black_castle_queen_side;
 }
 
-bool Board::can_black_castle_king_side() const {
+[[nodiscard]] bool Board::can_black_castle_king_side() const {
 	return _can_black_castle_king_side;
 }
 
@@ -209,7 +209,7 @@ for (uint8_t row = 0; row < 8; ++row) {
 	}
 }
 
-bool Board::white_in_checkmate(const std::vector<move::Move>& moves) const {
+[[nodiscard]] bool Board::white_in_checkmate(const std::vector<move::Move>& moves) const {
 	for (const auto& move : moves) {
 		if (_board[move.get_to_row()][move.get_to_col()] == (pieces::white | pieces::king)) {
 			return true;
@@ -218,7 +218,7 @@ bool Board::white_in_checkmate(const std::vector<move::Move>& moves) const {
 	return false;
 }
 
-bool Board::black_in_checkmate(const std::vector<move::Move>& moves) const {
+[[nodiscard]] bool Board::black_in_checkmate(const std::vector<move::Move>& moves) const {
 	for (const auto& move : moves) {
 		if (_board[move.get_to_row()][move.get_to_col()] == (pieces::black | pieces::king)) {
 			return true;
@@ -227,7 +227,7 @@ bool Board::black_in_checkmate(const std::vector<move::Move>& moves) const {
 	return false;
 }
 
-bool Board::is_game_finished(bool white_to_move) const {
+[[nodiscard]] bool Board::is_game_finished(bool white_to_move) const {
 	auto can_get_captured = [&](pieces::piece piece) {
 		std::vector<move::Move> moves;
 		std::vector<Board> boards;
@@ -251,19 +251,19 @@ bool Board::is_game_finished(bool white_to_move) const {
 	}
 }
 
-inline bool Board::_square_has_white_piece(const uint8_t row, const uint8_t col) const {
+[[nodiscard]] inline bool Board::_square_has_white_piece(const uint8_t row, const uint8_t col) const {
 	assert(row < 8);
 	assert(col < 8);
 	return ((_board[row][col] & pieces::black) == 0) && ((_board[row][col] | pieces::empty) != 0);
 }
 
-inline bool Board::_square_has_black_piece(const uint8_t row, const uint8_t col) const {
+[[nodiscard]] inline bool Board::_square_has_black_piece(const uint8_t row, const uint8_t col) const {
 	assert(row < 8);
 	assert(col < 8);
 	return ((_board[row][col] & pieces::black) != 0);
 }
 
-inline bool Board::_square_is_empty(const uint8_t row, const uint8_t col) const {
+[[nodiscard]] inline bool Board::_square_is_empty(const uint8_t row, const uint8_t col) const {
 	assert(row < 8);
 	assert(col < 8);
 	return (_board[row][col] == pieces::empty);
