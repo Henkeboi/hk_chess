@@ -24,6 +24,6 @@ main: build/pieces.o build/move.o build/board.o main.cpp
 	$(CXX) -o main main.cpp build/pieces.o build/move.o build/board.o  $(CXXFLAGS)
 
 clean:
-	rm -f main build/main.o build/pieces.o build/board.o build/move.o build/test_board.o
+	rm -f main build/main.o build/pieces.o build/board.o build/move.o build/board_test.o
 
 $(info $(shell mkdir -p build))
