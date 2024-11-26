@@ -29,7 +29,7 @@ build/zobrist.o: zobrist.cpp
 build/visualization.o: visualization.cpp 
 	$(CXX) -c -o build/visualization.o visualization.cpp
 
-main: build/pieces.o build/eval.o build/zobrist.o build/move.o build/search.o build/board.o build/visualization.o main.cpp
+main: build/pieces.o build/move.o build/board.o build/eval.o build/zobrist.o build/search.o build/visualization.o main.cpp
 	$(CXX) -o main main.cpp build/pieces.o build/move.o build/board.o build/search.o build/eval.o build/zobrist.o build/visualization.o $(CXXFLAGS)
 
 clean:
