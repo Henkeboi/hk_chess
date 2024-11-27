@@ -20,12 +20,12 @@ TEST(BoardTest, find_and_make_moves_test) {
 	Board board{};
 
 	test_find_moves_first_position(board);
-	move::Move first_move{1, 4, 3, 4};
+	move::Move first_move{1, 4, 3, 4, pieces::empty, false, true};
 	board = Board{board, first_move};
 	board = test_make_move_first_position(board);
 
 	test_find_moves_second_position(board);
-	move::Move second_move{6, 4, 4, 4};
+	move::Move second_move{6, 4, 4, 4, pieces::empty, false, true};
 	board = Board{board, second_move};
 	board = test_make_move_second_position(board);
 
@@ -102,13 +102,11 @@ void test_find_moves_first_position(Board board) {
 
 Board test_make_move_first_position(const Board board) {
 	// En passant tracking
-	move::Move expected_en_passant{1, 4, 3, 4};
-	EXPECT_EQ(expected_en_passant.get_from_row(), board.get_en_passant().get_from_row());
-	EXPECT_EQ(expected_en_passant.get_from_col(), board.get_en_passant().get_from_col());
-	EXPECT_EQ(expected_en_passant.get_to_row(),   board.get_en_passant().get_to_row());
-	EXPECT_EQ(expected_en_passant.get_to_col(),   board.get_en_passant().get_to_col());
-	EXPECT_EQ(expected_en_passant.get_promotion_piece(), board.get_en_passant().get_promotion_piece());
-	
+	move::Move expected_en_passant{1, 4, 3, 4, pieces::empty, false, true};
+	EXPECT_EQ(expected_en_passant.is_en_passant(), board.get_last_move().is_en_passant());
+	EXPECT_EQ(expected_en_passant.enables_en_passant(), board.get_last_move().enables_en_passant());
+	EXPECT_EQ(expected_en_passant.get_promotion_piece(), board.get_last_move().get_promotion_piece());
+
 	// Piece movement
 	pieces::piece expected_white_pawn = pieces::pawn | pieces::white;
 	pieces::piece expected_empty = pieces::empty;
@@ -172,12 +170,10 @@ void test_find_moves_second_position(const Board board) {
 
 Board test_make_move_second_position(const Board board) {
 	// En passant tracking
-	move::Move expected_en_passant{6, 4, 4, 4};
-	EXPECT_EQ(expected_en_passant.get_from_row(), board.get_en_passant().get_from_row());
-	EXPECT_EQ(expected_en_passant.get_from_col(), board.get_en_passant().get_from_col());
-	EXPECT_EQ(expected_en_passant.get_to_row(),   board.get_en_passant().get_to_row());
-	EXPECT_EQ(expected_en_passant.get_to_col(),   board.get_en_passant().get_to_col());
-	EXPECT_EQ(expected_en_passant.get_promotion_piece(), board.get_en_passant().get_promotion_piece());
+	move::Move expected_en_passant{6, 4, 4, 4, pieces::empty, false, true};
+	EXPECT_EQ(expected_en_passant.is_en_passant(), board.get_last_move().is_en_passant());
+	EXPECT_EQ(expected_en_passant.enables_en_passant(), board.get_last_move().enables_en_passant());
+	EXPECT_EQ(expected_en_passant.get_promotion_piece(), board.get_last_move().get_promotion_piece());
 	
 	// Piece movement
 	pieces::piece expected_black_pawn = pieces::pawn | pieces::black;
@@ -251,12 +247,10 @@ void test_find_moves_third_position(Board board) {
 
 Board test_make_move_third_position(Board board) {
 	// En passant tracking
-	move::Move expected_en_passant{10, 10, 10, 10};
-	EXPECT_EQ(expected_en_passant.get_from_row(), board.get_en_passant().get_from_row());
-	EXPECT_EQ(expected_en_passant.get_from_col(), board.get_en_passant().get_from_col());
-	EXPECT_EQ(expected_en_passant.get_to_row(),   board.get_en_passant().get_to_row());
-	EXPECT_EQ(expected_en_passant.get_to_col(),   board.get_en_passant().get_to_col());
-	EXPECT_EQ(expected_en_passant.get_promotion_piece(), board.get_en_passant().get_promotion_piece());
+	move::Move expected_en_passant{0, 0, 0, 0, pieces::empty, false, false};
+	EXPECT_EQ(expected_en_passant.is_en_passant(), board.get_last_move().is_en_passant());
+	EXPECT_EQ(expected_en_passant.enables_en_passant(), board.get_last_move().enables_en_passant());
+	EXPECT_EQ(expected_en_passant.get_promotion_piece(), board.get_last_move().get_promotion_piece());
 	
 	// Piece movement
 	pieces::piece expected_white_knight = pieces::knight | pieces::white;
@@ -329,13 +323,11 @@ void test_find_moves_fourth_position(const Board board) {
 
 Board test_make_move_fourth_position(Board board) {
 	// En passant tracking
-	move::Move expected_en_passant{10, 10, 10, 10};
-	EXPECT_EQ(expected_en_passant.get_from_row(), board.get_en_passant().get_from_row());
-	EXPECT_EQ(expected_en_passant.get_from_col(), board.get_en_passant().get_from_col());
-	EXPECT_EQ(expected_en_passant.get_to_row(),   board.get_en_passant().get_to_row());
-	EXPECT_EQ(expected_en_passant.get_to_col(),   board.get_en_passant().get_to_col());
-	EXPECT_EQ(expected_en_passant.get_promotion_piece(), board.get_en_passant().get_promotion_piece());
-	
+	move::Move expected_en_passant{0, 0, 0, 0, pieces::empty, false, false};
+	EXPECT_EQ(expected_en_passant.is_en_passant(), board.get_last_move().is_en_passant());
+	EXPECT_EQ(expected_en_passant.enables_en_passant(), board.get_last_move().enables_en_passant());
+	EXPECT_EQ(expected_en_passant.get_promotion_piece(), board.get_last_move().get_promotion_piece());
+		
 	// Piece movement
 	pieces::piece expected_black_knight = pieces::knight | pieces::black;
 	pieces::piece expected_empty = pieces::empty;
@@ -415,12 +407,10 @@ void test_find_moves_fifth_position(Board board) {
 
 Board test_make_move_fifth_position(Board board) {
 	// En passant tracking
-	move::Move expected_en_passant{10, 10, 10, 10};
-	EXPECT_EQ(expected_en_passant.get_from_row(), board.get_en_passant().get_from_row());
-	EXPECT_EQ(expected_en_passant.get_from_col(), board.get_en_passant().get_from_col());
-	EXPECT_EQ(expected_en_passant.get_to_row(),   board.get_en_passant().get_to_row());
-	EXPECT_EQ(expected_en_passant.get_to_col(),   board.get_en_passant().get_to_col());
-	EXPECT_EQ(expected_en_passant.get_promotion_piece(), board.get_en_passant().get_promotion_piece());
+	move::Move expected_en_passant{0, 0, 0, 0, pieces::empty, false, false};
+	EXPECT_EQ(expected_en_passant.is_en_passant(), board.get_last_move().is_en_passant());
+	EXPECT_EQ(expected_en_passant.enables_en_passant(), board.get_last_move().enables_en_passant());
+	EXPECT_EQ(expected_en_passant.get_promotion_piece(), board.get_last_move().get_promotion_piece());
 	
 	// Piece movement
 	pieces::piece expected_white_bishop = pieces::bishop | pieces::white;
@@ -494,12 +484,10 @@ void test_find_moves_sixth_position(Board board) {
 
 Board test_make_move_sixth_position(Board board) {
 	// En passant tracking
-	move::Move expected_en_passant{10, 10, 10, 10};
-	EXPECT_EQ(expected_en_passant.get_from_row(), board.get_en_passant().get_from_row());
-	EXPECT_EQ(expected_en_passant.get_from_col(), board.get_en_passant().get_from_col());
-	EXPECT_EQ(expected_en_passant.get_to_row(),   board.get_en_passant().get_to_row());
-	EXPECT_EQ(expected_en_passant.get_to_col(),   board.get_en_passant().get_to_col());
-	EXPECT_EQ(expected_en_passant.get_promotion_piece(), board.get_en_passant().get_promotion_piece());
+	move::Move expected_en_passant{0, 0, 0, 0, pieces::empty, false, false};
+	EXPECT_EQ(expected_en_passant.is_en_passant(), board.get_last_move().is_en_passant());
+	EXPECT_EQ(expected_en_passant.enables_en_passant(), board.get_last_move().enables_en_passant());
+	EXPECT_EQ(expected_en_passant.get_promotion_piece(), board.get_last_move().get_promotion_piece());
 	
 	// Piece movement
 	pieces::piece expected_black_knight = pieces::knight | pieces::black;
