@@ -4,7 +4,7 @@
 #include "assert.h"
 
 Board::Board() 
-: _en_passant(move::Move(10, 10, 10, 10)), _can_white_castle_queen_side(true), _can_white_castle_king_side(true),
+: _last_move(move::Move(0, 0, 0, 0, 0, false, false)), _can_white_castle_queen_side(true), _can_white_castle_king_side(true),
 _can_black_castle_queen_side(true), _can_black_castle_king_side(true) {
 	_board[0][0] = pieces::white | pieces::rook;
 	_board[0][1] = pieces::white | pieces::knight;
@@ -40,7 +40,7 @@ _can_black_castle_queen_side(true), _can_black_castle_king_side(true) {
 }
 
 Board::Board(const Board& board, const move::Move& move)
-: _board(board.get_raw_board()), _en_passant(board.get_en_passant()),
+: _board(board.get_raw_board()), _last_move(move),
 	_can_white_castle_queen_side(board.can_white_castle_queen_side()),
 	_can_white_castle_king_side(board.can_white_castle_king_side()),
 	_can_black_castle_queen_side(board.can_black_castle_queen_side()),
@@ -56,62 +56,54 @@ Board::Board(const Board& board, const move::Move& move)
 			assert(false);
 		}
 	}
-		
-	if (move.get_promotion_piece() == 0) {
-		// En passant
-		if (_en_passant.get_to_col() == move.get_to_col()
-				&& _en_passant.get_to_row() + 1 == move.get_to_row()
-				&& _board[move.get_from_row()][move.get_from_col()] == (pieces::white | pieces::pawn)) {
-					_board[_en_passant.get_to_row()][_en_passant.get_to_col()] = pieces::empty;
-		} else if (_en_passant.get_to_col() == move.get_to_col()
-				&& _en_passant.get_to_row() - 1 == move.get_to_row()
-				&& (_board[move.get_from_row()][move.get_from_col()] == (pieces::black | pieces::pawn))) {
-					_board[_en_passant.get_to_row()][_en_passant.get_to_col()] = pieces::empty;
-		}	else if (move.get_from_row() == 1 && move.get_to_row() == 3 
-				&& (_board[move.get_from_row()][move.get_from_col()] == (pieces::white | pieces::pawn))) {	
-					_en_passant = move;
-		}	else if (move.get_from_row() == 6 && move.get_to_row() == 4
-				&& (_board[move.get_from_row()][move.get_from_col()] == (pieces::black | pieces::pawn))) {	
-				_en_passant = move;
-		} else {
-				_en_passant = move::Move{10, 10, 10, 10, 0};
-		}
-		// Castling rights
-		if (move.get_from_row() == 0 && move.get_from_col() == 0) {
-			_can_white_castle_queen_side = false;
-		} else if (move.get_from_row() == 0 && move.get_from_col() == 7) {
-			_can_white_castle_king_side = false;
-		} else if (move.get_from_row() == 0 && move.get_from_col() == 4) {
-			_can_white_castle_queen_side = false;
-			_can_white_castle_king_side = false;
-		} else if (move.get_from_row() == 7 && move.get_from_col() == 0) {
-			_can_black_castle_queen_side = false;
-		} else if (move.get_from_row() == 7 && move.get_from_col() == 7) {
-			_can_black_castle_king_side = false;
-		} else if (move.get_from_row() == 7 && move.get_from_col() == 4) {
-			_can_black_castle_queen_side = false;
-			_can_black_castle_king_side = false;
-		}
 
-		// Castling
-		if (_board[move.get_from_row()][move.get_from_col()] == (pieces::king | pieces::white)
-				|| _board[move.get_from_row()][move.get_from_col()] == (pieces::king | pieces::black)) {
-			if (move.get_from_col() > move.get_to_col()) { // Avoid negative numbers (uint)
-				if (move.get_from_col() - move.get_to_col() == 2) { // Queen side castle
-					_board[move.get_from_row()][3] = _board[move.get_from_row()][0];
-					_board[move.get_from_row()][0] = pieces::empty;
-				}
-			} else if (move.get_to_col() - move.get_from_col() == 2) { // King side castle
-					_board[move.get_from_row()][5] = _board[move.get_from_row()][7];
-					_board[move.get_from_row()][7] = pieces::empty;
+	if (move.get_promotion_piece() != 0) {
+		assert(move.enables_en_passant() == false);
+		assert(move.is_en_passant() == false);
+	}
+	assert(move.enables_en_passant() == false || move.is_en_passant() == false);
+	
+	// Update castling rights
+	if (move.get_from_row() == 0 && move.get_from_col() == 0) {
+		_can_white_castle_queen_side = false;
+	} else if (move.get_from_row() == 0 && move.get_from_col() == 7) {
+		_can_white_castle_king_side = false;
+	} else if (move.get_from_row() == 0 && move.get_from_col() == 4) {
+		_can_white_castle_queen_side = false;
+		_can_white_castle_king_side = false;
+	} else if (move.get_from_row() == 7 && move.get_from_col() == 0) {
+		_can_black_castle_queen_side = false;
+	} else if (move.get_from_row() == 7 && move.get_from_col() == 7) {
+		_can_black_castle_king_side = false;
+	} else if (move.get_from_row() == 7 && move.get_from_col() == 4) {
+		_can_black_castle_queen_side = false;
+		_can_black_castle_king_side = false;
+	}
+
+	// Move rook if castling
+	if (_board[move.get_from_row()][move.get_from_col()] == (pieces::king | pieces::white)
+			|| _board[move.get_from_row()][move.get_from_col()] == (pieces::king | pieces::black)) {
+		if (move.get_from_col() > move.get_to_col()) { // Avoid negative numbers (uint)
+			if (move.get_from_col() - move.get_to_col() == 2) { // Queen side castle
+				_board[move.get_from_row()][3] = _board[move.get_from_row()][0];
+				_board[move.get_from_row()][0] = pieces::empty;
 			}
+		} else if (move.get_to_col() - move.get_from_col() == 2) { // King side castle
+				_board[move.get_from_row()][5] = _board[move.get_from_row()][7];
+				_board[move.get_from_row()][7] = pieces::empty;
 		}
+	}
+
+	if (move.get_promotion_piece() != 0) { 
+		_board[move.get_to_row()][move.get_to_col()] = move.get_promotion_piece();
+		_board[move.get_from_row()][move.get_from_col()] = pieces::empty;
+	} else if (move.is_en_passant() == true) { 
+		_board[board.get_last_move().get_to_row()][board.get_last_move().get_to_col()] = pieces::empty; 
 		_board[move.get_to_row()][move.get_to_col()] = _board[move.get_from_row()][move.get_from_col()];
 		_board[move.get_from_row()][move.get_from_col()] = pieces::empty;
 	} else {
-		_board[move.get_to_row()][move.get_to_col()] = move.get_promotion_piece();
+		_board[move.get_to_row()][move.get_to_col()] = _board[move.get_from_row()][move.get_from_col()];
 		_board[move.get_from_row()][move.get_from_col()] = pieces::empty;
-		_en_passant = move::Move{10, 10, 10, 10, 0};
 	}
 }
 
@@ -133,8 +125,8 @@ void Board::print() const {
 	return _board;
 }
 
-[[nodiscard]] const move::Move& Board::get_en_passant() const {
-	return _en_passant;
+[[nodiscard]] const move::Move& Board::get_last_move() const {
+	return _last_move;
 }
 
 [[nodiscard]] bool Board::can_white_castle_queen_side() const {
@@ -163,7 +155,7 @@ void Board::print() const {
 	if (can_black_castle_king_side() != rhs.can_black_castle_king_side()) 
 		return false;		
 
-	if (get_en_passant() != rhs.get_en_passant())
+	if (get_last_move() != rhs.get_last_move())
 		return false;
 		
 	for (uint8_t row = 0; row < 8; ++row) {
@@ -335,7 +327,7 @@ inline void Board::_get_white_pawn_moves(uint8_t row, uint8_t col, std::vector<m
 				boards.push_back(Board{*this, moves.back()});
 				// 2 steps forward
 				if (row == 1 && _square_is_empty(row + 2, col)) {
-					moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row + 2), col});
+					moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row + 2), col, pieces::empty, false, true});
 					boards.push_back(Board{*this, moves.back()});
 				}
 			}
@@ -352,14 +344,16 @@ inline void Board::_get_white_pawn_moves(uint8_t row, uint8_t col, std::vector<m
 		}
 		
 		// en passant	
-		if (row == 4 && _en_passant.get_to_row() == 4) {
-			if (col == _en_passant.get_to_col() - 1 && col > 0) {
-				moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row + 1), static_cast<uint8_t>(col - 1)});
-				boards.push_back(Board{*this, moves.back()});
-			} else if (col == _en_passant.get_to_col() + 1 && col < 7) {
-				moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row + 1), static_cast<uint8_t>(col + 1)});
-				boards.push_back(Board{*this, moves.back()});
-			}  
+		if (_last_move.enables_en_passant()) {
+			if (row == 4 && _last_move.get_to_row() == 4) {
+				if (col == _last_move.get_to_col() - 1 && col > 0) {
+					moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row + 1), static_cast<uint8_t>(col - 1), pieces::empty, true, false});
+					boards.push_back(Board{*this, moves.back()});
+				} else if (col == _last_move.get_to_col() + 1 && col < 7) {
+					moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row + 1), static_cast<uint8_t>(col + 1), pieces::empty, true, false});
+					boards.push_back(Board{*this, moves.back()});
+				}
+			}
 		}
 	}
 }
@@ -408,7 +402,7 @@ inline void Board::_get_black_pawn_moves(uint8_t row, uint8_t col, std::vector<m
 				// 2 steps forward
 				if (row == 6 && _square_is_empty(row - 2, col)) {
 					// seg
-					moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row - 2), col});
+					moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row - 2), col, pieces::empty, false, true});
 					boards.push_back(Board{*this, moves.back()});
 				}
 			}
@@ -425,15 +419,17 @@ inline void Board::_get_black_pawn_moves(uint8_t row, uint8_t col, std::vector<m
 		}
 		
 		// en passant	
-		if (row == 3 && _en_passant.get_to_row() == 3) {
-			if (col == _en_passant.get_to_col() + 1 && col > 0) {
-				moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row - 1), static_cast<uint8_t>(col - 1)});
-				boards.push_back(Board{*this, moves.back()});
-			} else if (col == _en_passant.get_to_col() - 1 && col < 7) {
-				moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row - 1), static_cast<uint8_t>(col + 1)});
-				boards.push_back(Board{*this, moves.back()});
-			}  
-		}
+		if (_last_move.enables_en_passant()) {	
+			if (row == 3 && _last_move.get_to_row() == 3) {
+				if (col == _last_move.get_to_col() + 1 && col > 0) {
+					moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row - 1), static_cast<uint8_t>(col - 1), pieces::empty, true, false});
+					boards.push_back(Board{*this, moves.back()});
+				} else if (col == _last_move.get_to_col() - 1 && col < 7) {
+					moves.emplace_back(move::Move{row, col, static_cast<uint8_t>(row - 1), static_cast<uint8_t>(col + 1), pieces::empty, true, false});
+					boards.push_back(Board{*this, moves.back()});
+				}  
+			}
+		}	
 	}
 }
 
