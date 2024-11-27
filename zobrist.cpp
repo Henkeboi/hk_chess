@@ -1,11 +1,12 @@
 #include "zobrist.hpp"
 #include <limits>
+#include <map>
+#include <cassert>
 #include <iostream>
 
-
 Zobrist::Zobrist(const Board& board, const bool white_to_move)
-: _initial_zobrist_hash(0), _uniform_distribution(0, std::numeric_limits<uint64_t>::max()) {
-	std::mt19937_64::result_type const seed = 49;
+: _initial_zobrist_hash(1084901349014850), _uniform_distribution(0, std::numeric_limits<uint64_t>::max()) {
+	std::mt19937_64::result_type const seed = 0xa4535b3446;
 	_rng.seed(seed);
 
 	for (auto piece_index = 0; piece_index < 12; ++piece_index) {
@@ -26,6 +27,8 @@ Zobrist::Zobrist(const Board& board, const bool white_to_move)
 	_can_black_castle_king_side_bits = _get_random_number();
 	_white_to_move_bits = _get_random_number();
 
+	assert(are_bit_strings_unique());
+
 	_init_zobrist_hash(board, white_to_move);
 }
 
@@ -33,7 +36,7 @@ uint64_t Zobrist::get_initial_zobrist_hash() const {
 	return _initial_zobrist_hash;
 }
 
-uint64_t Zobrist::new_zobrist_hash(const Board& board_to_hash, const Board& previous_board, const move::Move& last_move, uint64_t prev_zobrist_hash) const {
+uint64_t Zobrist::new_zobrist_hash(const Board& board_to_hash, const Board& prev_board, const move::Move& last_move, uint64_t prev_zobrist_hash) const {
 	switch (board_to_hash.get_raw_board()[last_move.get_to_row()][last_move.get_to_col()]) {
 		case (pieces::white | pieces::pawn):
 			prev_zobrist_hash ^= _piece_positions_bits[_white_pawn_index][last_move.get_from_row()][last_move.get_from_col()];
@@ -86,31 +89,60 @@ uint64_t Zobrist::new_zobrist_hash(const Board& board_to_hash, const Board& prev
 	}
 
 	prev_zobrist_hash ^= _white_to_move_bits;
-	if (board_to_hash.can_white_castle_queen_side() != previous_board.can_white_castle_queen_side()) 
+	if (board_to_hash.can_white_castle_queen_side() != prev_board.can_white_castle_queen_side()) 
 		prev_zobrist_hash ^= _can_white_castle_queen_side_bits;
-	if (board_to_hash.can_white_castle_king_side() != previous_board.can_white_castle_king_side()) 
+	if (board_to_hash.can_white_castle_king_side() != prev_board.can_white_castle_king_side()) 
 		prev_zobrist_hash ^= _can_white_castle_king_side_bits;
-	if (board_to_hash.can_black_castle_queen_side() != previous_board.can_black_castle_queen_side()) 
+	if (board_to_hash.can_black_castle_queen_side() != prev_board.can_black_castle_queen_side()) 
 		prev_zobrist_hash ^= _can_black_castle_queen_side_bits;
-	if (board_to_hash.can_black_castle_king_side() != previous_board.can_black_castle_king_side()) 
-		prev_zobrist_hash ^= _can_black_castle_king_side_bits;
-	prev_zobrist_hash ^=_white_to_move_bits;
+	if (board_to_hash.can_black_castle_king_side() != prev_board.can_black_castle_king_side()) 
+		prev_zobrist_hash = _can_black_castle_king_side_bits ^ prev_zobrist_hash;
+	
+	if (last_move.enables_en_passant() == true)
+		prev_zobrist_hash ^= _en_passant_files_bits[last_move.get_from_col()];
 
-	const move::Move to_hash_en_passant = board_to_hash.get_en_passant();
-	if (to_hash_en_passant.get_from_row() < 8 && to_hash_en_passant.get_from_col() < 8) {
-		if (to_hash_en_passant.get_to_row() < 8 && to_hash_en_passant.get_to_col() < 8) {
-			prev_zobrist_hash ^= _en_passant_files_bits[to_hash_en_passant.get_to_col()];
-		}
-	}
-
-	const move::Move previous_en_passant = previous_board.get_en_passant();
-	if (previous_en_passant.get_from_row() < 8 && previous_en_passant.get_from_col() < 8) {
-		if (previous_en_passant.get_to_row() < 8 && previous_en_passant.get_to_col() < 8) {
-			prev_zobrist_hash ^= _en_passant_files_bits[previous_en_passant.get_to_col()];
-		}
-	}
+	const move::Move prev_move = prev_board.get_last_move();
+	if (prev_move.enables_en_passant() == true)
+		prev_zobrist_hash ^=  _en_passant_files_bits[prev_move.get_from_col()];
 
 	return prev_zobrist_hash;
+}
+
+bool Zobrist::are_bit_strings_unique() const {
+	std::map<uint64_t, int> bit_strings_counter;
+
+	auto add_to_bit_strings_counter = [&bit_strings_counter](uint64_t bit_string) {
+		if (bit_strings_counter.find(bit_string) == bit_strings_counter.end()) {
+			bit_strings_counter[bit_string] = 1;
+		} else {
+			bit_strings_counter[bit_string] += 1;
+		}
+	};
+
+	for (auto piece_index = 0; piece_index < 12; ++piece_index) {
+		for (auto row = 0; row < 8; ++row) {
+			for (auto col = 0; col < 8; ++col) {
+				add_to_bit_strings_counter(_piece_positions_bits[piece_index][row][col]);
+			}
+		}
+	}
+
+	for (auto col = 0; col < 8; ++col) {
+		add_to_bit_strings_counter(_en_passant_files_bits[col]);
+	}
+	
+	add_to_bit_strings_counter(_white_to_move_bits);
+	add_to_bit_strings_counter(_can_white_castle_queen_side_bits);
+	add_to_bit_strings_counter(_can_white_castle_king_side_bits);
+	add_to_bit_strings_counter(_can_black_castle_queen_side_bits);
+	add_to_bit_strings_counter(_can_black_castle_king_side_bits);
+
+	for (auto [bit_string_key, counter] : bit_strings_counter) {
+		if (counter > 1) {
+			return false;
+		}		
+	}
+	return true;
 }
 
 void Zobrist::_init_zobrist_hash(const Board& board, const bool white_to_move)	{
@@ -155,25 +187,22 @@ void Zobrist::_init_zobrist_hash(const Board& board, const bool white_to_move)	{
 					break;
 			}
 		}
-
-		if (board.can_white_castle_queen_side()) 
-			_initial_zobrist_hash ^= _can_white_castle_queen_side_bits;
-		if (board.can_white_castle_king_side()) 
-			_initial_zobrist_hash ^= _can_white_castle_king_side_bits;
-		if (board.can_black_castle_queen_side()) 
-			_initial_zobrist_hash ^= _can_black_castle_queen_side_bits;
-		if (board.can_black_castle_king_side()) 
-			_initial_zobrist_hash ^= _can_black_castle_king_side_bits;
-		if (white_to_move) 
-			_initial_zobrist_hash ^= _white_to_move_bits;
-
-		const move::Move en_passant = board.get_en_passant();
-		if (en_passant.get_from_row() < 8 && en_passant.get_from_col() < 8) {
-			if (en_passant.get_to_row() < 8 && en_passant.get_to_col() < 8) {
-				_initial_zobrist_hash ^= _en_passant_files_bits[en_passant.get_to_col()];
-			}
-		}
 	}
+
+	if (board.can_white_castle_queen_side()) 
+		_initial_zobrist_hash ^= _can_white_castle_queen_side_bits;
+	if (board.can_white_castle_king_side()) 
+		_initial_zobrist_hash ^= _can_white_castle_king_side_bits;
+	if (board.can_black_castle_queen_side()) 
+		_initial_zobrist_hash ^= _can_black_castle_queen_side_bits;
+	if (board.can_black_castle_king_side()) 
+		_initial_zobrist_hash ^= _can_black_castle_king_side_bits;
+	if (white_to_move) 
+		_initial_zobrist_hash ^= _white_to_move_bits;
+
+	const move::Move last_move = board.get_last_move();
+	if (last_move.is_en_passant() == true)
+			_initial_zobrist_hash ^= _en_passant_files_bits[last_move.get_to_col()];
 }
 
 std::mt19937_64::result_type Zobrist::_get_random_number() {

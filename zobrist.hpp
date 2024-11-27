@@ -8,7 +8,8 @@ class Zobrist {
 	public:
 	Zobrist(const Board& board, const bool white_to_move);
 	uint64_t get_initial_zobrist_hash() const;
-	uint64_t new_zobrist_hash(const Board& board_to_hash, const Board& previous_board, const move::Move& last_move, uint64_t previous_zobrist_hash) const;
+	uint64_t new_zobrist_hash(const Board& board_to_hash, const Board& previous_board, const move::Move& move_to_hash, uint64_t previous_zobrist_hash) const;
+	bool are_bit_strings_unique() const;
 	private:
 	std::mt19937_64::result_type _get_random_number();
 	void _init_zobrist_hash(const Board& board, const bool white_to_move);
