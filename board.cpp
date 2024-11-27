@@ -154,9 +154,6 @@ void Board::print() const {
 		return false;		
 	if (can_black_castle_king_side() != rhs.can_black_castle_king_side()) 
 		return false;		
-
-	if (get_last_move() != rhs.get_last_move())
-		return false;
 		
 	for (uint8_t row = 0; row < 8; ++row) {
 		for (uint8_t col = 0; col < 8; ++col) {
