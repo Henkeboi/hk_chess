@@ -153,6 +153,29 @@ void Board::print() const {
 	return _can_black_castle_king_side;
 }
 
+[[nodiscard]] bool Board::operator==(const Board& rhs) const {
+	if (can_white_castle_queen_side() != rhs.can_white_castle_queen_side()) 
+		return false;		
+	if (can_white_castle_king_side() != rhs.can_white_castle_king_side()) 
+		return false;		
+	if (can_black_castle_queen_side() != rhs.can_black_castle_queen_side()) 
+		return false;		
+	if (can_black_castle_king_side() != rhs.can_black_castle_king_side()) 
+		return false;		
+
+	if (get_en_passant() != rhs.get_en_passant())
+		return false;
+		
+	for (uint8_t row = 0; row < 8; ++row) {
+		for (uint8_t col = 0; col < 8; ++col) {
+			if (_board[row][col] != rhs.get_raw_board()[row][col])	
+				return false;
+		}
+	}
+	
+	return true;
+}
+
 void Board::get_white_moves(std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures, bool check_castle) const {
 	for (uint8_t row = 0; row < 8; ++row) {
 		for (uint8_t col = 0; col < 8; ++col) {

@@ -22,6 +22,7 @@ public:
 	[[nodiscard]] bool can_white_castle_king_side() const;
 	[[nodiscard]] bool can_black_castle_queen_side() const;
 	[[nodiscard]] bool can_black_castle_king_side() const;
+	[[nodiscard]] bool operator==(const Board& rhs) const;
 private:
 	[[nodiscard]] inline bool _square_has_white_piece(const uint8_t row, const uint8_t col) const;
 	[[nodiscard]] inline bool _square_has_black_piece(const uint8_t row, const uint8_t col) const;
