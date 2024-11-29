@@ -6,7 +6,7 @@
 
 Zobrist::Zobrist(const Board& board, const bool white_to_move)
 : _initial_zobrist_hash(0), _uniform_distribution(0, std::numeric_limits<uint64_t>::max()) {
-	std::mt19937_64::result_type const seed = 0xa4535b34434526;
+	std::mt19937_64::result_type const seed = 0x14314;
 	_rng.seed(seed);
 
 	for (auto piece_index = 0; piece_index < 12; ++piece_index) {
@@ -82,6 +82,23 @@ uint64_t Zobrist::new_zobrist_hash(const Board& board_to_hash, const Board& prev
 	xor_hash_with_piece_value(board_to_hash, last_move.get_to_row(), last_move.get_to_col());
 	if (prev_board.get_raw_board()[last_move.get_to_row()][last_move.get_to_col()] != pieces::empty) {
 		xor_hash_with_piece_value(prev_board, last_move.get_to_row(), last_move.get_to_col());
+	}
+	
+	if (last_move.is_en_passant()) {
+		xor_hash_with_piece_value(prev_board, last_move.get_from_row(), last_move.get_from_col());
+	}
+	// Handle castling
+	if (prev_board.get_raw_board()[last_move.get_from_row()][last_move.get_from_col()] == (pieces::king | pieces::white)
+  	 || prev_board.get_raw_board()[last_move.get_from_row()][last_move.get_from_col()] == (pieces::king | pieces::black)) {
+		if (last_move.get_from_col() > last_move.get_to_col()) { // Avoid negative numbers (uint)
+			if (last_move.get_from_col() - last_move.get_to_col() == 2) { // Queen side castle
+				xor_hash_with_piece_value(board_to_hash, last_move.get_from_row(), 3);
+				xor_hash_with_piece_value(board_to_hash, last_move.get_from_row(), 0);
+			}
+		} else if (last_move.get_to_col() - last_move.get_from_col() == 2) { // King side castle
+			xor_hash_with_piece_value(board_to_hash, last_move.get_from_row(), 5);
+			xor_hash_with_piece_value(board_to_hash, last_move.get_from_row(), 7);
+		}
 	}
 
 	prev_zobrist_hash ^= _white_to_move_bits;
@@ -197,7 +214,7 @@ void Zobrist::_init_zobrist_hash(const Board& board, const bool white_to_move)	{
 		_initial_zobrist_hash ^= _white_to_move_bits;
 
 	const move::Move last_move = board.get_last_move();
-	if (last_move.is_en_passant() == true)
+	if (last_move.enables_en_passant() == true)
 			_initial_zobrist_hash ^= _en_passant_files_bits[last_move.get_to_col()];
 }
 
