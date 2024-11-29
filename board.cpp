@@ -146,6 +146,13 @@ void Board::print() const {
 }
 
 [[nodiscard]] bool Board::operator==(const Board& rhs) const {
+	for (uint8_t row = 0; row < 8; ++row) {
+		for (uint8_t col = 0; col < 8; ++col) {
+			if (_board[row][col] != rhs.get_raw_board()[row][col])	
+				return false;
+		}
+	}
+	
 	if (can_white_castle_queen_side() != rhs.can_white_castle_queen_side()) 
 		return false;		
 	if (can_white_castle_king_side() != rhs.can_white_castle_king_side()) 
@@ -154,14 +161,11 @@ void Board::print() const {
 		return false;		
 	if (can_black_castle_king_side() != rhs.can_black_castle_king_side()) 
 		return false;		
-		
-	for (uint8_t row = 0; row < 8; ++row) {
-		for (uint8_t col = 0; col < 8; ++col) {
-			if (_board[row][col] != rhs.get_raw_board()[row][col])	
-				return false;
-		}
-	}
 	
+	if (_last_move.enables_en_passant() != rhs.get_last_move().enables_en_passant()) {
+		return false;
+	}
+
 	return true;
 }
 
@@ -917,7 +921,7 @@ inline void Board::_get_black_rook_moves(uint8_t row, uint8_t col, std::vector<m
 				moves.emplace_back(move::Move{row, old_col, static_cast<uint8_t>(row), static_cast<uint8_t>(col)});
 				boards.push_back(Board{*this, moves.back()});
 				return;
-			}	else {
+			} else {
 				return;
 			}
 		}
