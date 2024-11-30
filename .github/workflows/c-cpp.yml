@@ -27,4 +27,6 @@ jobs:
         sudo apt-get install libgtest-dev libtool autoconf build-essential pkg-config automake tcsh -y 
         make ubuntu -C tests/board_test
         tests/board_test/main
+        make ubuntu -C tests/zobrist_test
+        tests/zobrist_test/main
     - uses: actions/checkout@v4
