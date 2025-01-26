@@ -39,6 +39,54 @@ _can_black_castle_queen_side(true), _can_black_castle_king_side(true) {
 	_board[7][7] = pieces::black | pieces::rook;
 }
 
+Board::Board(std::string position) :
+_last_move(move::Move(0, 0, 0, 0, 0, false, false)), _can_white_castle_queen_side(true), _can_white_castle_king_side(true),
+_can_black_castle_queen_side(true), _can_black_castle_king_side(true) {
+	// Fill board
+	int position_index = 0;
+	int piece_sign = 1;
+	int ascii_minus_value = 45;
+	int ascii_zero_value = 48;
+	uint8_t row = 0;
+	uint8_t col = 0;
+
+	while (row < 8) {
+		while (col < 8) {	
+			if (position[position_index] == ascii_minus_value) {
+				piece_sign = -1;
+			} else {
+				if (piece_sign == 1) {
+					_board[row][col] = pieces::white | (uint8_t)(position[position_index] - ascii_zero_value);
+				}	else {
+					_board[row][col] = pieces::black | (uint8_t)(position[position_index] - ascii_zero_value);
+				}
+				piece_sign = 1;	
+				++col;
+			}
+			++position_index;
+		}
+		col = 0;
+		++row;
+	}
+	
+	++position_index;
+	if (position[position_index] == 0) {
+		_can_white_castle_queen_side = false;
+	} 
+	++position_index;
+	if (position[position_index] == 0) {
+		_can_white_castle_king_side = false;
+	}
+	++position_index;
+	if (position[position_index] == 0) {
+		_can_black_castle_queen_side = false;
+	} 
+	++position_index;
+	if (position[position_index] == 0) {
+		_can_black_castle_king_side = false;
+	} 
+}
+
 Board::Board(const Board& board, const move::Move& move)
 : _board(board.get_raw_board()), _last_move(move),
 	_can_white_castle_queen_side(board.can_white_castle_queen_side()),

@@ -5,10 +5,12 @@
 
 #include <vector>
 #include <array>
+#include <string>
 
 class Board {
 public:
 	Board();
+	Board(std::string position);
 	Board(const Board& board, const move::Move& move);
 	void print() const;
 	void get_white_moves(std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures, bool check_castle=true) const;
