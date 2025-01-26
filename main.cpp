@@ -11,6 +11,7 @@
 bool check_if_threefold_repetition(std::map<uint64_t, uint8_t>& position_repeat_counter, uint64_t zobrist_hash);
 void inspect_position();
 
+
 int main() {
 	//inspect_position();
 	
@@ -24,8 +25,8 @@ int main() {
 	Zobrist zobrist_hasher{board, maximizing_player};
 	uint64_t zobrist_hash = zobrist_hasher.get_initial_zobrist_hash();
 	std::map<uint64_t, uint8_t> position_repeat_counter{};
+
 	while (!is_game_finished) {
-		visualization::update_visualization(board);
 		if (maximizing_player) {
 			search::search(board, white_depth, maximizing_player, zobrist_hasher, position_repeat_counter, zobrist_hash, best_move);
 		} else {
@@ -33,6 +34,7 @@ int main() {
 		}
 		Board prev_board = board;
 		board = Board{board, best_move};
+		visualization::update_visualization(board);
 		zobrist_hash = zobrist_hasher.new_zobrist_hash(board, prev_board, best_move, zobrist_hash);
 		if (check_if_threefold_repetition(position_repeat_counter, zobrist_hash)) {
 			std::cout << "Threefold repetition\n";
@@ -41,7 +43,7 @@ int main() {
 		is_game_finished = board.is_game_finished(!maximizing_player);
 		maximizing_player = !maximizing_player;
 	}
-
+	std::cout << "Game over\n";
   return 0;
 }
 

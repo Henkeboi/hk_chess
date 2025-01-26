@@ -1,11 +1,11 @@
 #include "search.hpp"
 #include "eval.hpp"
+#include "zobrist.hpp"
 #include <chrono>
 #include <algorithm>
 #include <iostream>
-#include <thread>
-#include <limits>
-
+#include <limits.h>
+#include <optional>
 
 namespace {
 	SearchStatistics::SearchStatistics()
@@ -79,6 +79,7 @@ namespace {
 				eval = new_eval;
 				if (depth == start_depth) {
 					best_move = moves[i];
+
 				}
 				if (eval > beta) {
 					break;
@@ -109,6 +110,40 @@ namespace {
 			}
 		}
 		return eval;
+	}
+
+	std::optional<move::Move> get_random_move_if_not_checkmate(const Board& board, bool maximizing_player) {
+		std::vector<move::Move> moves;
+		std::vector<Board> boards;
+		if (maximizing_player) {
+			board.get_white_moves(moves, boards, false);
+			std::vector<move::Move> checkmating_moves;
+			std::vector<Board> checkmating_boards;
+			for (size_t i = 0; i < moves.size() && i < boards.size(); ++i) {
+				boards[i].get_black_moves(checkmating_moves, checkmating_boards, false);
+				if (!boards[i].white_in_checkmate(checkmating_moves)) {
+					return moves[i];
+				}
+				checkmating_moves.clear();
+				checkmating_boards.clear();
+				std::cout << "White in checkmate\n";
+			}
+		} else {
+			board.get_black_moves(moves, boards, false);
+			std::vector<move::Move> checkmating_moves;
+			std::vector<Board> checkmating_boards;
+			for (size_t i = 0; i < moves.size() && i < boards.size(); ++i) {
+				boards[i].get_white_moves(checkmating_moves, checkmating_boards, false);
+				if (!boards[i].black_in_checkmate(checkmating_moves)) {
+					return moves[i];
+				}
+				checkmating_moves.clear();
+				checkmating_boards.clear();
+			}
+			std::cout << "Black in checkmate\n";
+		}
+		std::cout << "No move\n";
+		return std::nullopt;	
 	}
 }
 
