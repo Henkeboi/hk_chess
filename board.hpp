@@ -17,7 +17,7 @@ public:
 	void get_black_moves(std::vector<move::Move>& moves, std::vector<Board>& boards, bool only_captures, bool check_castle=true) const;
 	[[nodiscard]] bool white_in_checkmate(const std::vector<move::Move>& moves) const;
 	[[nodiscard]] bool black_in_checkmate(const std::vector<move::Move>& moves) const;
-	[[nodiscard]] bool is_game_finished(bool white_to_move) const;
+	[[nodiscard]] bool is_checkmate(bool white_to_move) const;
 	[[nodiscard]] const std::array<std::array<uint8_t, 8>, 8>& get_raw_board() const;
 	[[nodiscard]] const move::Move& get_last_move() const;
 	[[nodiscard]] bool can_white_castle_queen_side() const;

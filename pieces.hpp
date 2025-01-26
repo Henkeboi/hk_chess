@@ -23,7 +23,7 @@ namespace pieces {
 	const int bishop_value = 330;
 	const int rook_value = 500;
 	const int queen_value = 900;
-	const int king_value = 20000;
+	const int king_value = 2000;
 };
 
 #endif 

@@ -291,7 +291,7 @@ for (uint8_t row = 0; row < 8; ++row) {
 	return false;
 }
 
-[[nodiscard]] bool Board::is_game_finished(bool white_to_move) const {
+[[nodiscard]] bool Board::is_checkmate(bool white_to_move) const {
 	auto can_get_captured = [&](pieces::piece piece) {
 		std::vector<move::Move> moves;
 		std::vector<Board> boards;

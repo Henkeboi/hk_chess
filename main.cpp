@@ -31,6 +31,7 @@ int main() {
 		} else {
 			search::search(board, black_depth, maximizing_player, zobrist_hasher, position_repeat_counter, zobrist_hash, best_move);
 		}
+
 		Board prev_board = board;
 		board = Board{board, best_move};
 		zobrist_hash = zobrist_hasher.new_zobrist_hash(board, prev_board, best_move, zobrist_hash);
@@ -38,9 +39,10 @@ int main() {
 			std::cout << "Threefold repetition\n";
 			break;
 		}
-		is_game_finished = board.is_game_finished(!maximizing_player);
+		
 		maximizing_player = !maximizing_player;
 	}
+	visualization::update_visualization(board);
 
   return 0;
 }

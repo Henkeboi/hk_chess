@@ -5,7 +5,7 @@
 #include <iostream>
 #include <thread>
 #include <limits>
-
+#include "assert.h"
 
 namespace {
 	SearchStatistics::SearchStatistics()
@@ -15,17 +15,22 @@ namespace {
 	int alpha_beta(const Board& node, int depth, bool maximizing_player, Zobrist zobrist_hasher, std::map<uint64_t, uint8_t>& position_repeat_counter, uint64_t node_hash, move::Move& best_move, const int start_depth, SearchStatistics& search_statistics, int alpha=INT_MIN, int beta=INT_MAX);
 	bool is_threefold_repetition(std::map<uint64_t, uint8_t>& position_repeat_counter, uint64_t zobrist_hash);
 	void decrement_position_repeat_counter(std::map<uint64_t, uint8_t>& position_repeat_counter, uint64_t zobrist_hash);
+	move::Move get_random_move(const Board& board, bool maximizing_player);
 }
 
 namespace search {
 	void search(const Board board, int depth, bool maximizing_player, Zobrist zobrist_hasher, std::map<uint64_t, uint8_t> position_repeat_counter, uint64_t zobrist_hash, move::Move& best_move) {
 		SearchStatistics search_statistics{};
 		int evaluation = alpha_beta(board, depth, maximizing_player, zobrist_hasher, position_repeat_counter, zobrist_hash, best_move, depth, search_statistics);
-		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
 		std::cout << "Positions generated: " << search_statistics.positions_generated << "\n";
 		std::cout << "Positions evaluated: " << search_statistics.positions_evaluated << "\n";
 		std::cout << "Evaluation: " << evaluation << "\n";
+
+		if ((evaluation < -20000 && maximizing_player) || (evaluation > 20000 && !maximizing_player)) {
+			best_move = get_random_move(board,  maximizing_player);
+		}
 	}
 }
 
@@ -34,33 +39,40 @@ namespace {
  	std::vector<move::Move> moves;
  	std::vector<Board> boards;
 
+	bool checking_forced = false;
  	if (maximizing_player) {
  		if (depth > 0) {
  			node.get_white_moves(moves, boards, false);
  		} else {
  			node.get_white_moves(moves, boards, true);
+			checking_forced = true;
  		}
 	} else {
 		if (depth > 0) {
 			node.get_black_moves(moves, boards, false);
 		} else {
 			node.get_black_moves(moves, boards, true);
+			checking_forced = true;
 		}
 	}
 
-	if (maximizing_player) {
-		if (node.black_in_checkmate(moves)) {
-			search_statistics.positions_evaluated += 1;
-			return INT_MAX;
+	if (!checking_forced) {
+		if (moves.size() == 0) {
+			return 0; // Stalemate
 		}
-	} else {
-		if (node.white_in_checkmate(moves)) {
-			search_statistics.positions_evaluated += 1;
-			return INT_MIN;
-		}
-	}
 
-	if (moves.size() == 0) {
+		if (maximizing_player) {
+			if (node.black_in_checkmate(moves)) {
+				search_statistics.positions_evaluated += 1;
+				return INT_MAX;
+			}
+		} else {
+			if (node.white_in_checkmate(moves)) {
+				search_statistics.positions_evaluated += 1;
+				return INT_MIN;
+			}
+		}
+	} else if (moves.size() == 0) {
 		search_statistics.positions_evaluated += 1;
 		return eval::eval(node);
 	}
@@ -132,4 +144,38 @@ bool is_threefold_repetition(std::map<uint64_t, uint8_t>& position_repeat_counte
 	return false;
 }
 
+move::Move get_random_move(const Board& board, bool maximizing_player) {
+	if (maximizing_player) {
+		std::vector<move::Move> moves;
+		std::vector<Board> boards;
+		board.get_white_moves(moves, boards, false);
+		for (size_t i = 0; i < boards.size(); ++i) {
+			std::vector<move::Move> black_moves;
+			std::vector<Board> black_boards;
+			boards[i].get_black_moves(black_moves, black_boards, false);
+			if (!boards[i].white_in_checkmate(black_moves)) {
+				return moves[i];
+			}
+		}
+	}	else {
+		std::vector<move::Move> moves;
+		std::vector<Board> boards;
+		board.get_black_moves(moves, boards, false);
+		for (size_t i = 0; i < boards.size(); ++i) {
+			std::vector<move::Move> white_moves;
+			std::vector<Board> white_boards;
+			boards[i].get_white_moves(white_moves, white_boards, false);
+			if (!boards[i].black_in_checkmate(white_moves)) {
+				return moves[i];
+			}
+		}
+	}
+	if (maximizing_player) {
+		std::cout << "White in checkmate\n";
+		exit(0);
+	} else {
+		std::cout << "Black in checkmate\n";
+		exit(0);
+	}
+}
 }
