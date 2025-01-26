@@ -1,50 +1,36 @@
-#include <iostream>
-
 #include "board.hpp"
 #include "search.hpp"
 #include "visualization.hpp"
 #include "zobrist.hpp"
 #include <vector>
-#include "robin_map/robin_map.h"
+#include <map>
+#include <iostream>
+#include <fstream>
+#include <string>
 
-bool check_if_threefold_repetition(tsl::robin_map<uint64_t, uint8_t>& position_repeat_counter, uint64_t zobrist_hash);
+bool check_if_threefold_repetition(std::map<uint64_t, uint8_t>& position_repeat_counter, uint64_t zobrist_hash);
+void inspect_position();
+
 
 int main() {
+	//inspect_position();
+	
 	Board board{};
 	move::Move best_move{0, 0, 0, 0};
 	int white_depth = 4;
 	int black_depth = 4;
 	bool maximizing_player = true;
-
-	//for (int i = 0; i < 20; ++i) {
-	//	search::search(board, 6, maximizing_player, best_move);
-	//}
-	//return 0;
-	
 	bool is_game_finished = false;
+
 	Zobrist zobrist_hasher{board, maximizing_player};
 	uint64_t zobrist_hash = zobrist_hasher.get_initial_zobrist_hash();
-	tsl::robin_map<uint64_t, uint8_t> position_repeat_counter{};
-	visualization::update_visualization(board);
-	search::Search move_search{board, maximizing_player};
-
-	while (!is_game_finished) {
-		move::Move best_move = move_search.find_next_move(board, maximizing_player);
-		board = Board{board, best_move};
-		visualization::update_visualization(board);
-
-		is_game_finished = board.is_game_finished(!maximizing_player);
-		maximizing_player = !maximizing_player;
-	}
-	visualization::update_visualization(board);
-
-	return 0;
+	std::map<uint64_t, uint8_t> position_repeat_counter{};
 
 	while (!is_game_finished) {
 		if (maximizing_player) {
-			search::search(board, white_depth, maximizing_player, best_move, zobrist_hash, zobrist_hasher, position_repeat_counter);
+			search::search(board, white_depth, maximizing_player, zobrist_hasher, position_repeat_counter, zobrist_hash, best_move);
 		} else {
-			search::search(board, black_depth, maximizing_player, best_move, zobrist_hash, zobrist_hasher, position_repeat_counter);
+			search::search(board, black_depth, maximizing_player, zobrist_hasher, position_repeat_counter, zobrist_hash, best_move);
 		}
 		Board prev_board = board;
 		board = Board{board, best_move};
@@ -61,7 +47,7 @@ int main() {
   return 0;
 }
 
-bool check_if_threefold_repetition(tsl::robin_map<uint64_t, uint8_t>& position_repeat_counter, uint64_t zobrist_hash) {
+bool check_if_threefold_repetition(std::map<uint64_t, uint8_t>& position_repeat_counter, uint64_t zobrist_hash) {
 	if (position_repeat_counter.find(zobrist_hash) == position_repeat_counter.end()) {
 		position_repeat_counter[zobrist_hash] = 1;
 	} else {
@@ -72,3 +58,28 @@ bool check_if_threefold_repetition(tsl::robin_map<uint64_t, uint8_t>& position_r
 	}
 	return false;
 }
+
+void inspect_position() {
+	std::ifstream position_file;
+  position_file.open("positions/1.txt");
+	std::string position = "";
+	std::getline(position_file, position);
+	position_file.close();
+	Board board{position};
+	visualization::update_visualization(board);
+
+	move::Move best_move{0, 0, 0, 0};
+	int depth = 4;
+	bool maximizing_player = false;
+	Zobrist zobrist_hasher{board, maximizing_player};
+	uint64_t zobrist_hash = zobrist_hasher.get_initial_zobrist_hash();
+	std::map<uint64_t, uint8_t> position_repeat_counter{};
+	search::search(board, depth, maximizing_player, zobrist_hasher, position_repeat_counter, zobrist_hash, best_move);
+	board = Board{board, best_move};
+	visualization::update_visualization(board);
+
+
+
+	exit(0);
+}
+

@@ -9,221 +9,107 @@
 
 namespace {
 	SearchStatistics::SearchStatistics()
-	: timeout_exceeded(false), evaluation(0), positions_evaluated(0), positions_generated(0) {
-
+	: timeout_exceeded(false), positions_evaluated(0), positions_generated(0) {
 	}
 
-	int alpha_beta(const Board& node, int depth, bool maximizing_player, move::Move& best_move, const int start_depth, SearchStatistics& search_statistics, tsl::robin_map<uint64_t, int>& transposition_table, tsl::robin_map<uint64_t, uint8_t> position_counter, uint64_t node_zobrist_hash, const Zobrist& zobrist_hasher, int alpha=INT_MIN, int beta=INT_MAX);
-
-	std::optional<move::Move> get_random_move_if_not_checkmate(const Board& board, bool maximizing_player);
+	int alpha_beta(const Board& node, int depth, bool maximizing_player, Zobrist zobrist_hasher, std::map<uint64_t, uint8_t>& position_repeat_counter, uint64_t node_hash, move::Move& best_move, const int start_depth, SearchStatistics& search_statistics, int alpha=INT_MIN, int beta=INT_MAX);
+	bool is_threefold_repetition(std::map<uint64_t, uint8_t>& position_repeat_counter, uint64_t zobrist_hash);
+	void decrement_position_repeat_counter(std::map<uint64_t, uint8_t>& position_repeat_counter, uint64_t zobrist_hash);
 }
 
 namespace search {
-
-	Search::Search(const Board& board, bool maximizing_player) : _board(board), 
-		_zobrist_hasher{board, maximizing_player}, _last_zobrist_hash(_zobrist_hasher.get_initial_zobrist_hash()), 
-		_position_repeat_counter(tsl::robin_map<uint64_t, uint8_t>{}), _white_search_depth(5), _black_search_depth(5) {
-	}
-	
-	move::Move Search::find_next_move(const Board& board, bool maximizing_player) {
-		auto search_start = std::chrono::high_resolution_clock::now();
-		move::Move best_move{0, 0, 0, 0};
-		if (maximizing_player) {
-			search(board, _white_search_depth, maximizing_player, best_move, _last_zobrist_hash, _zobrist_hasher, _position_repeat_counter);
-		} else {
-			search(board, _black_search_depth, maximizing_player, best_move, _last_zobrist_hash, _zobrist_hasher, _position_repeat_counter);
-		}
-
-		Board new_board = Board{board, best_move};
-    _last_zobrist_hash = _zobrist_hasher.new_zobrist_hash(new_board, board, best_move, _last_zobrist_hash);
-		auto search_stop = std::chrono::high_resolution_clock::now();
-		auto search_execution_time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(search_stop - search_start);
-		if (search_execution_time_ms.count() < 1000) {
-			if (maximizing_player) {
-				_white_search_depth += 1;
-			} else {
-				_black_search_depth += 1;
-			}
-		} else if (search_execution_time_ms.count() > 3000) {
-			if (maximizing_player) {
-				if (_white_search_depth > 4000)
-					_white_search_depth -= 1;
-			} else {
-				if (_black_search_depth > 4000)
-					_black_search_depth -= 1;
-			}
-		}
-
-		if (maximizing_player) {
-			std::cout << "White search depth " << _white_search_depth << "\n";
-			std::cout << "White execution time " << search_execution_time_ms.count() << "\n";
-		} else {
-				std::cout << "Black search depth " << _black_search_depth << "\n";
-				std::cout << "Black execution time " << search_execution_time_ms.count() << "\n";
-		}
-		return best_move;
-	}
-	
-	void search(const Board& board, int depth, bool maximizing_player, move::Move& best_move, uint64_t board_zobrist_hash, Zobrist& zobrist_hasher, tsl::robin_map<uint64_t, uint8_t> position_repeat_counter) {
+	void search(const Board board, int depth, bool maximizing_player, Zobrist zobrist_hasher, std::map<uint64_t, uint8_t> position_repeat_counter, uint64_t zobrist_hash, move::Move& best_move) {
 		SearchStatistics search_statistics{};
-		tsl::robin_map<uint64_t, int> transposition_table{};
-		alpha_beta(board, depth, maximizing_player, best_move, depth, search_statistics, transposition_table, position_repeat_counter, board_zobrist_hash, zobrist_hasher);
-
-		if (best_move.get_to_row() == best_move.get_from_row()) {
-  		if (best_move.get_to_col() == best_move.get_from_col()) {
-				std::optional<move::Move> random_move = get_random_move_if_not_checkmate(board, maximizing_player);
-				if (random_move.has_value()) {
-					std::cout << "Random move\n";
-					best_move = random_move.value();
-				} else {	
-					exit(0);
-				}
-	  	}
-		}
-
-		if (board.get_raw_board()[best_move.get_from_row()][best_move.get_from_col()] == pieces::empty) {
-			std::optional<move::Move> random_move = get_random_move_if_not_checkmate(board, maximizing_player);
-			if (random_move.has_value()) {
-				std::cout << "Random move\n";
-				best_move = random_move.value();
-			} else {	
-				exit(0);
-			}
-		}
+		int evaluation = alpha_beta(board, depth, maximizing_player, zobrist_hasher, position_repeat_counter, zobrist_hash, best_move, depth, search_statistics);
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
 		std::cout << "Positions generated: " << search_statistics.positions_generated << "\n";
 		std::cout << "Positions evaluated: " << search_statistics.positions_evaluated << "\n";
-		std::cout << "Evaluation: " << search_statistics.evaluation << "\n";
+		std::cout << "Evaluation: " << evaluation << "\n";
 	}
 }
 
 namespace {
-	void increment_zobrist_hash_counter(tsl::robin_map<uint64_t, uint8_t>& position_counter, uint64_t zobrist_hash) {
-		if (position_counter.find(zobrist_hash) == position_counter.end()) {
-			position_counter[zobrist_hash] = 1;
+	int alpha_beta(const Board& node, int depth, bool maximizing_player, Zobrist zobrist_hasher, std::map<uint64_t, uint8_t>& position_repeat_counter, uint64_t node_hash, move::Move& best_move, const int start_depth, SearchStatistics& search_statistics, int alpha, int beta) {
+ 	std::vector<move::Move> moves;
+ 	std::vector<Board> boards;
+
+ 	if (maximizing_player) {
+ 		if (depth > 0) {
+ 			node.get_white_moves(moves, boards, false);
+ 		} else {
+ 			node.get_white_moves(moves, boards, true);
+ 		}
+	} else {
+		if (depth > 0) {
+			node.get_black_moves(moves, boards, false);
 		} else {
-			position_counter[zobrist_hash] += 1;
+			node.get_black_moves(moves, boards, true);
 		}
 	}
 
-	void decrement_zobrist_hash_counter(tsl::robin_map<uint64_t, uint8_t>& position_counter, uint64_t zobrist_hash) {
-		position_counter[zobrist_hash] -= 1;
-		if (position_counter[zobrist_hash] == 0) {
-			auto erase_iterator = position_counter[zobrist_hash];
-			position_counter.erase(erase_iterator);
+	if (maximizing_player) {
+		if (node.black_in_checkmate(moves)) {
+			search_statistics.positions_evaluated += 1;
+			return INT_MAX;
+		}
+	} else {
+		if (node.white_in_checkmate(moves)) {
+			search_statistics.positions_evaluated += 1;
+			return INT_MIN;
 		}
 	}
 
-	int alpha_beta(const Board& node, int depth, bool maximizing_player, move::Move& best_move, const int start_depth, SearchStatistics& search_statistics, tsl::robin_map<uint64_t, int>& transposition_table, tsl::robin_map<uint64_t, uint8_t> position_counter, uint64_t node_hash, const Zobrist& zobrist_hasher, int alpha, int beta) {
-		if (maximizing_player) {
-			std::vector<move::Move> moves;
-			std::vector<Board> boards;
-			if (depth > 0) {
-				node.get_white_moves(moves, boards, false);
-			} else {
-				node.get_white_moves(moves, boards, true);
-			}
+	if (moves.size() == 0) {
+		search_statistics.positions_evaluated += 1;
+		return eval::eval(node);
+	}
 
-			if (node.black_in_checkmate(moves)) {
-				search_statistics.positions_evaluated += 1;
-				return INT_MAX;
+	if (maximizing_player) {
+		int eval = INT_MIN;
+		for (size_t i = 0; i < moves.size() && i < boards.size(); ++i) {
+			search_statistics.positions_generated += 1;	
+			uint64_t zobrist_hash = zobrist_hasher.new_zobrist_hash(boards[i], node, moves[i], node_hash);
+			int new_eval = 0;
+			if (!is_threefold_repetition(position_repeat_counter, zobrist_hash)) {
+				new_eval = alpha_beta(boards[i], depth - 1, !maximizing_player, zobrist_hasher, position_repeat_counter, zobrist_hash, best_move, start_depth, search_statistics, alpha, beta);
 			}
+			decrement_position_repeat_counter(position_repeat_counter, zobrist_hash);
+			if (eval < new_eval) {
+				eval = new_eval;
+				if (depth == start_depth) {
+					best_move = moves[i];
 
-			if (moves.size() == 0) {
-				//if (depth < 0) {
-					search_statistics.positions_evaluated += 1;
-					return eval::eval(node);
-				/*} else {
-					return 0; // Stalemate
-				}*/
-			}
-			
-			int evaluation = INT_MIN;
-			for (size_t i = 0; i < moves.size() && i < boards.size(); ++i) {
-				search_statistics.positions_generated += 1;	
-				int new_evaluation = 0;
-				const uint64_t new_zobrist_hash = zobrist_hasher.new_zobrist_hash(boards[i], node, moves[i], node_hash);
-				increment_zobrist_hash_counter(position_counter, new_zobrist_hash);
-				if (position_counter[new_zobrist_hash] == 3) {
-					return 0;
 				}
-				if (transposition_table.find(new_zobrist_hash) == transposition_table.end()) {
-					new_evaluation = alpha_beta(boards[i], depth - 1, !maximizing_player, best_move, start_depth, search_statistics, transposition_table, position_counter, new_zobrist_hash, zobrist_hasher, alpha, beta);
-				} else {
-					new_evaluation = transposition_table[new_zobrist_hash];
+				if (eval > beta) {
+					break;
 				}
-				decrement_zobrist_hash_counter(position_counter, new_zobrist_hash);
-				if (evaluation < new_evaluation) {
-					evaluation = new_evaluation;
-					if (depth == start_depth) {
-						best_move = moves[i];
-						search_statistics.evaluation = evaluation;
-					}
-					if (evaluation > beta) {
-						break;
-					}
-					if (transposition_table.find(new_zobrist_hash) == transposition_table.end()) {
-						transposition_table[new_zobrist_hash] = new_evaluation;
-					} 
-					alpha = std::max(alpha, evaluation);
-				} 
-			}
-			return evaluation;
-		} else {
-			std::vector<move::Move> moves;
-			std::vector<Board> boards;
-			if (depth > 0) {
-				node.get_black_moves(moves, boards, false);
-			} else {
-				node.get_black_moves(moves, boards, true);
-			}
-
-			if (node.white_in_checkmate(moves)) {
-				search_statistics.positions_evaluated += 1;
-				return INT_MIN;
-			}
-
-			if (moves.size() == 0) {
-				//if (depth < 0) {
-				search_statistics.positions_evaluated += 1;
-				return eval::eval(node);
-				/*} else {
-					return 0; // Stalemate
-				}*/
-			}
-
-			int evaluation = INT_MAX;
-			for (size_t i = 0; i < moves.size() && i < boards.size(); ++i) {
-				search_statistics.positions_generated += 1;	
-				int new_evaluation = 0;
-				const uint64_t new_zobrist_hash = zobrist_hasher.new_zobrist_hash(boards[i], node, moves[i], node_hash);
-				increment_zobrist_hash_counter(position_counter, new_zobrist_hash);
-				if (position_counter[new_zobrist_hash] == 3) {
-					return 0;
-				}
-				if (transposition_table.find(new_zobrist_hash) == transposition_table.end()) {
-					new_evaluation = alpha_beta(boards[i], depth - 1, !maximizing_player, best_move, start_depth, search_statistics, transposition_table, position_counter, new_zobrist_hash, zobrist_hasher, alpha, beta);
-				} else {
-					new_evaluation = transposition_table[new_zobrist_hash];
-				}
-				decrement_zobrist_hash_counter(position_counter, new_zobrist_hash);
-				if (evaluation > new_evaluation) {
-					evaluation = new_evaluation;
-					if (depth == start_depth) {
-						best_move = moves[i];
-						search_statistics.evaluation = evaluation;
-					}
-					if (evaluation < alpha) {
-						break;
-					}
-					if (transposition_table.find(new_zobrist_hash) == transposition_table.end()) {
-						transposition_table[new_zobrist_hash] = new_evaluation;
-					} 
-					beta = std::min(beta, evaluation);
-				}
-			}
-			return evaluation;
+				alpha = std::max(alpha, eval);
+			} 
 		}
+		return eval;
+	} else {
+		int eval = INT_MAX;
+		for (size_t i = 0; i < moves.size() && i < boards.size(); ++i) {
+			search_statistics.positions_generated += 1;	
+			uint64_t zobrist_hash = zobrist_hasher.new_zobrist_hash(boards[i], node, moves[i], node_hash);
+			int new_eval = 0;
+			if (!is_threefold_repetition(position_repeat_counter, zobrist_hash)) {
+				new_eval = alpha_beta(boards[i], depth - 1, !maximizing_player, zobrist_hasher, position_repeat_counter, zobrist_hash, best_move, start_depth, search_statistics, alpha, beta);
+			}
+			decrement_position_repeat_counter(position_repeat_counter, zobrist_hash);
+			if (eval > new_eval) {
+				eval = new_eval;
+				if (depth == start_depth) {
+					best_move = moves[i];
+				}
+				if (eval < alpha) {
+					break;
+				}
+				beta = std::min(beta, eval);
+			}
+		}
+		return eval;
 	}
 
 	std::optional<move::Move> get_random_move_if_not_checkmate(const Board& board, bool maximizing_player) {
@@ -259,4 +145,26 @@ namespace {
 		std::cout << "No move\n";
 		return std::nullopt;	
 	}
+}
+
+void decrement_position_repeat_counter(std::map<uint64_t, uint8_t>& position_repeat_counter, uint64_t zobrist_hash) {
+	if (position_repeat_counter[zobrist_hash] == 1) {
+		position_repeat_counter.erase(position_repeat_counter.find(zobrist_hash));
+	} else {
+		position_repeat_counter[zobrist_hash] -= 1;
+	}
+}
+
+bool is_threefold_repetition(std::map<uint64_t, uint8_t>& position_repeat_counter, uint64_t zobrist_hash) {
+	if (position_repeat_counter.find(zobrist_hash) == position_repeat_counter.end()) {
+		position_repeat_counter[zobrist_hash] = 1;
+	} else {
+		position_repeat_counter[zobrist_hash] += 1;
+		if (position_repeat_counter[zobrist_hash] == 3) {
+			return true;
+		}
+	}
+	return false;
+}
+
 }
