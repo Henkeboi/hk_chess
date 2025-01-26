@@ -2,6 +2,7 @@
 #define __SEARCH__HPP__
 
 #include "board.hpp"
+#include "zobrist.hpp"
 #include <map>
 
 namespace {
@@ -16,7 +17,7 @@ namespace {
 
 
 namespace search {
-	void search(const Board& board, int depth, bool maximizing_player,std::map<uint64_t, uint8_t> position_repeat_counter, move::Move& best_move);
+	void search(const Board board, int depth, bool maximizing_player, Zobrist zobrist_hasher, std::map<uint64_t, uint8_t> position_repeat_counter, uint64_t zobrist_hash, move::Move& best_move);
 }
 
 #endif // __MINMAX__HPP__
