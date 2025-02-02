@@ -26,8 +26,27 @@ Move::Move(const Move& other)
 : _from(other._from), _to(other._to), _promotion_piece(other.get_promotion_piece()) {
 }
 
+Move::Move(const std::string move) :
+	_from(0), _to(0), _promotion_piece(0) {
+	_from |= uint8_t(move[1] - 49) << 3;
+	_from |= uint8_t(move[0] - 97);
+	_to |= uint8_t(move[3] - 49) << 3;
+	_to |= uint8_t(move[2] - 97); 
+}
+
 void Move::print() const {
 	std::cout << static_cast<int>(get_from_row()) << ", " << static_cast<int>(get_from_col()) << ", " << static_cast<int>(get_to_row()) << ", " << static_cast<int>(get_to_col()) << "\n";
+}
+
+std::string Move::get_move_as_string() const {
+	std::string move_as_string = "";
+
+	move_as_string += char(97 + this->get_from_col());
+	move_as_string += char(49 + this->get_from_row());
+	move_as_string += char(97 + this->get_to_col());
+	move_as_string += char(49 + this->get_to_row());
+
+	return move_as_string;
 }
 
 move::Move& Move::operator=(const Move& other) {

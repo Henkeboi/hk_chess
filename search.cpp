@@ -12,7 +12,7 @@ namespace {
 	: timeout_exceeded(false), positions_evaluated(0), positions_generated(0) {
 	}
 
-	int alpha_beta(const Board& node, int depth, bool maximizing_player, Zobrist zobrist_hasher, std::map<uint64_t, uint8_t>& position_repeat_counter, uint64_t node_hash, move::Move& best_move, const int start_depth, SearchStatistics& search_statistics, int alpha=INT_MIN, int beta=INT_MAX);
+	int alpha_beta(const Board& node, int depth, bool maximizing_player, Zobrist& zobrist_hasher, std::map<uint64_t, uint8_t>& position_repeat_counter, uint64_t node_hash, move::Move& best_move, const int start_depth, SearchStatistics& search_statistics, int alpha=INT_MIN, int beta=INT_MAX);
 	bool is_threefold_repetition(std::map<uint64_t, uint8_t>& position_repeat_counter, uint64_t zobrist_hash);
 	void decrement_position_repeat_counter(std::map<uint64_t, uint8_t>& position_repeat_counter, uint64_t zobrist_hash);
 	move::Move get_random_move(const Board& board, bool maximizing_player);
@@ -24,9 +24,9 @@ namespace search {
 		int evaluation = alpha_beta(board, depth, maximizing_player, zobrist_hasher, position_repeat_counter, zobrist_hash, best_move, depth, search_statistics);
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-		std::cout << "Positions generated: " << search_statistics.positions_generated << "\n";
-		std::cout << "Positions evaluated: " << search_statistics.positions_evaluated << "\n";
-		std::cout << "Evaluation: " << evaluation << "\n";
+		//std::cout << "Positions generated: " << search_statistics.positions_generated << "\n";
+		//std::cout << "Positions evaluated: " << search_statistics.positions_evaluated << "\n";
+		//std::cout << "Evaluation: " << evaluation << "\n";
 
 		if ((evaluation < -20000 && maximizing_player) || (evaluation > 20000 && !maximizing_player)) {
 			best_move = get_random_move(board,  maximizing_player);
@@ -35,7 +35,7 @@ namespace search {
 }
 
 namespace {
-	int alpha_beta(const Board& node, int depth, bool maximizing_player, Zobrist zobrist_hasher, std::map<uint64_t, uint8_t>& position_repeat_counter, uint64_t node_hash, move::Move& best_move, const int start_depth, SearchStatistics& search_statistics, int alpha, int beta) {
+	int alpha_beta(const Board& node, int depth, bool maximizing_player, Zobrist& zobrist_hasher, std::map<uint64_t, uint8_t>& position_repeat_counter, uint64_t node_hash, move::Move& best_move, const int start_depth, SearchStatistics& search_statistics, int alpha, int beta) {
  	std::vector<move::Move> moves;
  	std::vector<Board> boards;
 

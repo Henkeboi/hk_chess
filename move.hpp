@@ -2,6 +2,7 @@
 #define MOVE_HPP_
 
 #include "pieces.hpp"
+#include <string>
 
 namespace {
 	const uint8_t col_bitmask = 0b00000111;
@@ -15,11 +16,13 @@ namespace move {
 	public:
 		Move(uint8_t from_row, uint8_t from_col, uint8_t to_row, uint8_t to_col, uint8_t promotion_piece=pieces::empty, bool is_en_passant=false, bool enables_en_passant=false);
 		Move(const Move& other);
+		Move(const std::string move);
 		Move& operator=(const Move& other);
 		Move& operator=(Move& other);
 		bool operator==(const Move& other) const;
 		~Move() = default;
 		void print() const;
+		std::string get_move_as_string() const;
 		[[nodiscard]] inline auto get_from_row() const { return (_from & row_bitmask) >> 3; }
 		[[nodiscard]] inline auto get_from_col() const { return _from & col_bitmask; }
 		[[nodiscard]] inline auto get_to_row() const { return (_to & row_bitmask) >> 3; }
