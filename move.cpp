@@ -28,6 +28,17 @@ Move::Move(const Move& other)
 
 Move::Move(const std::string move) :
 	_from(0), _to(0), _promotion_piece(0) {
+	if (move.size() == 5) {
+		if (move[4] == 'k') {
+			_promotion_piece = pieces::black | pieces::knight;
+		} else if (move[4] == 'b') {
+			_promotion_piece = pieces::black | pieces::bishop;
+		} else if (move[4] == 'r') {
+			_promotion_piece = pieces::black | pieces::rook;
+		} else if (move[4] == 'q') {
+			_promotion_piece = pieces::black | pieces::queen;
+		}
+	}
 	_from |= uint8_t(move[1] - 49) << 3;
 	_from |= uint8_t(move[0] - 97);
 	_to |= uint8_t(move[3] - 49) << 3;

@@ -311,7 +311,7 @@ for (uint8_t row = 0; row < 8; ++row) {
 	if (white_to_move) {
 		return can_get_captured((pieces::king | pieces::black));
 	} else {
-		return can_get_captured(pieces::king);
+		return can_get_captured(pieces::king | pieces::white);
 	}
 }
 
