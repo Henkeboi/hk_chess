@@ -1,6 +1,5 @@
 #include "board.hpp"
 #include "search.hpp"
-#include "visualization.hpp"
 #include "zobrist.hpp"
 #include <vector>
 #include <map>
@@ -24,7 +23,6 @@ int main() {
 		std::cout << "Total score: " << total_score << "\n";
 		std::cout << "Game played: " << games_played_counter << "\n\n";
 	}
-
 
 	return 0;
 }
@@ -52,14 +50,15 @@ double play_stockfish() {
 	tsl::robin_map<uint64_t, uint8_t> position_repeat_counter{};
 	std::vector<std::string> move_sequence;
 	while (true) {
-		visualization::update_visualization(board);
 		if (maximizing_player) {
 			bool white_in_checkmate, black_in_checkmate = false;
 			std::tie(best_move, white_in_checkmate, black_in_checkmate) = search::search(board, white_depth, maximizing_player,
 															 zobrist_hasher, position_repeat_counter, zobrist_hash, best_move);
+			std::string command = "curl --header \"Content-Type: application/json\" --request POST --data '{\"move\":\"" + best_move.as_string() + "\"}' http://localhost:3000/make-move";
+			system(command.c_str());
+
 			if (white_in_checkmate) {
 				std::cout << "White in checkmate\n";
-				visualization::update_visualization(board);
 				return 0;
 			}
 			std::cout << "White move: ";
@@ -72,14 +71,16 @@ double play_stockfish() {
 			std::string best_move_str = get_best_move();
 			if (best_move_str == "") {
 				std::cout << "Black in checkmate\n";
-				visualization::update_visualization(board);
 				return 1;
 			} else {
 				best_move = move::Move(best_move_str);
 				std::cout << "Black move: ";
+				std::string command = "curl --header \"Content-Type: application/json\" --request POST --data '{\"move\":\"" + best_move.as_string() + "\"}' http://localhost:3000/make-move";
+				system(command.c_str());
+				
 			}
 		}
-		std::cout << best_move.get_move_as_string() << "\n";
+		std::cout << best_move.as_string() << "\n";
 		move_sequence.push_back(best_move.get_move_as_string());
 
 		Board prev_board = board;
@@ -87,7 +88,6 @@ double play_stockfish() {
 		zobrist_hash = zobrist_hasher.new_zobrist_hash(board, prev_board, best_move, zobrist_hash);
 		if (check_if_threefold_repetition(position_repeat_counter, zobrist_hash)) {
 			std::cout << "Threefold repetition\n";
-			visualization::update_visualization(board);
 			return 0.5;
 		}
 		maximizing_player = !maximizing_player;
@@ -99,7 +99,7 @@ bool check_if_threefold_repetition(tsl::robin_map<uint64_t, uint8_t>& position_r
 		position_repeat_counter[zobrist_hash] = 1;
 	} else {
 		position_repeat_counter[zobrist_hash] += 1;
-		if (position_repeat_counter[zobrist_hash] == 4) {
+		if (position_repeat_counter[zobrist_hash] == 3) {
 			return true;
 		}
 	}

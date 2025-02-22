@@ -60,6 +60,16 @@ std::string Move::get_move_as_string() const {
 	return move_as_string;
 }
 
+std::string Move::as_string() const {
+	std::string move_as_string = "";
+	move_as_string += std::to_string((int)this->get_from_row()) + std::string(",");
+	move_as_string += std::to_string((int)this->get_from_col()) + std::string(",");
+	move_as_string += std::to_string((int)this->get_to_row()) + std::string(",");
+	move_as_string += std::to_string((int)this->get_to_col());
+
+	return move_as_string;
+}
+
 move::Move& Move::operator=(const Move& other) {
 	_from = other._from;
 	_to = other._to;

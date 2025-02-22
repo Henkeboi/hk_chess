@@ -29,13 +29,10 @@ build/eval.o: eval.cpp
 build/zobrist.o: zobrist.cpp
 	$(CXX) -c -o build/zobrist.o zobrist.cpp
 
-build/visualization.o: visualization.cpp 
-	$(CXX) -c -o build/visualization.o visualization.cpp
-
-main: build/robin_map.o build/pieces.o build/move.o build/board.o build/eval.o build/zobrist.o build/search.o build/visualization.o main.cpp
-	$(CXX) -o main main.cpp build/robin_map.o build/pieces.o build/move.o build/board.o build/search.o build/eval.o build/zobrist.o build/visualization.o $(CXXFLAGS)
+main: build/robin_map.o build/pieces.o build/move.o build/board.o build/eval.o build/zobrist.o build/search.o main.cpp
+	$(CXX) -o main main.cpp build/robin_map.o build/pieces.o build/move.o build/board.o build/search.o build/eval.o build/zobrist.o $(CXXFLAGS)
 
 clean:
-	rm -f build/main.o main build/robin_map.o build/pieces.o build/eval.o build/search.o build/board.o build/move.o build/visualization.o build/zobrist.o
+	rm -f build/main.o main build/robin_map.o build/pieces.o build/eval.o build/search.o build/board.o build/move.o build/zobrist.o
 
 $(info $(shell mkdir -p build))

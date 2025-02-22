@@ -13,22 +13,21 @@ app.get('/', function(req, res){
     res.sendFile(__dirname + '/index.html');
 });
 
-
-
 let can_white_castle_queen_side = true 
 let can_white_castle_king_side = true 
 let can_black_castle_queen_side = true 
 let can_black_castle_king_side = true 
 let en_passant_x = -1
 let board = [
-    ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
-    ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
     ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],
+    ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
+
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
+    ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
     [can_white_castle_queen_side, can_white_castle_king_side, can_black_castle_queen_side, can_black_castle_king_side, en_passant_x]
 ];
 let last_move = null;
