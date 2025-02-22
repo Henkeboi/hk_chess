@@ -162,7 +162,7 @@ namespace eval {
 
 	int eval(const Board& board) {
 		auto [white_game_stage, black_game_stage] = decide_game_stage(board);
-
+		
 		int eval = 0;
 		for (int row = 0; row < 8; ++row) {
 			for (int col = 0; col < 8; ++col) {

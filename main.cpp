@@ -43,7 +43,7 @@ std::string get_best_move() {
 
 double play_stockfish() {
 	Board board{};
-	move::Move best_move{0, 0, 0, 0};
+	Move best_move{0, 0, 0, 0};
 	int white_depth = 4;
 	bool maximizing_player = true;
 
@@ -64,7 +64,7 @@ double play_stockfish() {
 			}
 			std::cout << "White move: ";
 		} else {
-			std::string command = "source venv/bin/activate; python main.py ";
+			std::string command = "source venv/bin/activate; python stockfish/main.py ";
 			for (auto move_made : move_sequence) {
 				command += move_made.c_str() + std::string{" "};
 			}
@@ -75,7 +75,7 @@ double play_stockfish() {
 				visualization::update_visualization(board);
 				return 1;
 			} else {
-				best_move = move::Move(best_move_str);
+				best_move = Move(best_move_str);
 				std::cout << "Black move: ";
 			}
 		}

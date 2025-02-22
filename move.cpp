@@ -2,8 +2,6 @@
 #include <cassert>
 #include <iostream>
 
-namespace move {
-
 Move::Move(uint8_t from_row, uint8_t from_col, uint8_t to_row, uint8_t to_col, uint8_t promotion_piece, bool is_en_passant, bool enables_en_passant)
 : _from(0), _to(0), _promotion_piece(promotion_piece) {
 	assert(from_row < 8);
@@ -60,14 +58,14 @@ std::string Move::get_move_as_string() const {
 	return move_as_string;
 }
 
-move::Move& Move::operator=(const Move& other) {
+Move& Move::operator=(const Move& other) {
 	_from = other._from;
 	_to = other._to;
 	_promotion_piece = other._promotion_piece;
 	return *this;
 }
 
-move::Move& Move::operator=(Move& other) {
+Move& Move::operator=(Move& other) {
 	_from = other._from;
 	_to = other._to;
 	_promotion_piece = other.get_promotion_piece();
@@ -82,6 +80,4 @@ bool Move::operator==(const Move& other) const {
 	if (get_promotion_piece() != other.get_promotion_piece()) 
 		return false;
 	return true;
-}
-
 }

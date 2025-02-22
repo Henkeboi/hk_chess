@@ -1,0 +1,39 @@
+body {
+    display: flex;
+    justify-content: center;
+    margin-top: 80px;
+    flex-direction: column;
+    align-items: center;
+}
+.board {
+    display: grid;
+    grid-template-columns: repeat(8, 80px);
+    grid-template-rows: repeat(8, 80px);
+    gap: 0;
+    border: 2px solid #000;
+    position: relative;
+}
+.square {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    cursor: pointer;
+    position: relative;
+}
+.white {
+    background-color: #f0d9b5;
+}
+.black {
+    background-color: #b58863;
+}
+.piece {
+    cursor: pointer;
+    width: 60px;
+    height: 60px;
+}
+button {
+    margin-top: 30px;
+}

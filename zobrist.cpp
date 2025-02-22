@@ -36,7 +36,7 @@ uint64_t Zobrist::get_initial_zobrist_hash() const {
 	return _initial_zobrist_hash;
 }
 
-uint64_t Zobrist::new_zobrist_hash(const Board& board_to_hash, const Board& prev_board, const move::Move& last_move, uint64_t prev_zobrist_hash) const {
+uint64_t Zobrist::new_zobrist_hash(const Board& board_to_hash, const Board& prev_board, const Move& last_move, uint64_t prev_zobrist_hash) const {
 	auto xor_hash_with_piece_value = [this, &prev_zobrist_hash](const Board& board, uint8_t row, uint8_t col) {
 		switch (board.get_raw_board()[row][col]) {
 			case (pieces::white | pieces::pawn):
@@ -114,7 +114,7 @@ uint64_t Zobrist::new_zobrist_hash(const Board& board_to_hash, const Board& prev
 	if (last_move.enables_en_passant() == true)
 		prev_zobrist_hash ^= _en_passant_files_bits[last_move.get_from_col()];
 
-	const move::Move prev_move = prev_board.get_last_move();
+	const Move prev_move = prev_board.get_last_move();
 	if (prev_move.enables_en_passant() == true)
 		prev_zobrist_hash ^= _en_passant_files_bits[prev_move.get_from_col()];
 
@@ -213,7 +213,7 @@ void Zobrist::_init_zobrist_hash(const Board& board, const bool white_to_move)	{
 	if (white_to_move) 
 		_initial_zobrist_hash ^= _white_to_move_bits;
 
-	const move::Move last_move = board.get_last_move();
+	const Move last_move = board.get_last_move();
 	if (last_move.enables_en_passant() == true)
 			_initial_zobrist_hash ^= _en_passant_files_bits[last_move.get_to_col()];
 }
