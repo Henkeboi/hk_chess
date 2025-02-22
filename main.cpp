@@ -64,7 +64,7 @@ double play_stockfish() {
 			}
 			std::cout << "White move: ";
 		} else {
-			std::string command = "source venv/bin/activate; python main.py ";
+			std::string command = "source venv/bin/activate; python stockfish/main.py ";
 			for (auto move_made : move_sequence) {
 				command += move_made.c_str() + std::string{" "};
 			}
