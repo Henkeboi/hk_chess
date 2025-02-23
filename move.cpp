@@ -60,6 +60,34 @@ std::string Move::get_move_as_string() const {
 	return move_as_string;
 }
 
+std::string Move::as_string() const {
+	std::string move_as_string = "";
+	move_as_string += std::to_string((int)this->get_from_row()) + std::string(",");
+	move_as_string += std::to_string((int)this->get_from_col()) + std::string(",");
+	move_as_string += std::to_string((int)this->get_to_row()) + std::string(",");
+	move_as_string += std::to_string((int)this->get_to_col()) + std::string(",");
+	if (this->get_promotion_piece() == 0)
+		move_as_string += " ";
+	if (this->get_promotion_piece() == (pieces::knight | pieces::white))
+		move_as_string += "N";
+	if (this->get_promotion_piece() == (pieces::bishop | pieces::white))
+		move_as_string += "B";
+	if (this->get_promotion_piece() == (pieces::rook | pieces::white))
+		move_as_string += "R";
+	if (this->get_promotion_piece() == (pieces::queen | pieces::white))
+		move_as_string += "Q";
+	if (this->get_promotion_piece() == (pieces::knight | pieces::black))
+		move_as_string += "n";
+	if (this->get_promotion_piece() == (pieces::bishop | pieces::black))
+		move_as_string += "b";
+	if (this->get_promotion_piece() == (pieces::rook | pieces::black))
+		move_as_string += "r";
+	if (this->get_promotion_piece() == (pieces::queen | pieces::black))
+		move_as_string += "q";
+
+	return move_as_string;
+}
+
 move::Move& Move::operator=(const Move& other) {
 	_from = other._from;
 	_to = other._to;
