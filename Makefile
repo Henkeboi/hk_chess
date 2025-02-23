@@ -1,6 +1,6 @@
 all: main 
 CXX = clang -std=c++23 -O3 -Wall -Wextra
-CXXFLAGS = -lstdc++ -lm
+CXXFLAGS = -lstdc++ -lm -lcurl
 
 ubuntu: CXX = clang-19 -std=c++23 -O3 -Wall -Wextra -Werror
 ubuntu: main
@@ -29,10 +29,13 @@ build/eval.o: eval.cpp
 build/zobrist.o: zobrist.cpp
 	$(CXX) -c -o build/zobrist.o zobrist.cpp
 
-main: build/robin_map.o build/pieces.o build/move.o build/board.o build/eval.o build/zobrist.o build/search.o main.cpp
-	$(CXX) -o main main.cpp build/robin_map.o build/pieces.o build/move.o build/board.o build/search.o build/eval.o build/zobrist.o $(CXXFLAGS)
+build/chess_server.o: chess_server.cpp
+	$(CXX) -c -o build/chess_server.o chess_server.cpp
+
+main: build/robin_map.o build/pieces.o build/move.o build/board.o build/eval.o build/zobrist.o build/search.o build/chess_server.o main.cpp
+	$(CXX) -o main main.cpp build/robin_map.o build/pieces.o build/move.o build/board.o build/search.o build/eval.o build/zobrist.o build/chess_server.o $(CXXFLAGS)
 
 clean:
-	rm -f build/main.o main build/robin_map.o build/pieces.o build/eval.o build/search.o build/board.o build/move.o build/zobrist.o
+	rm -f build/main.o main build/robin_map.o build/pieces.o build/eval.o build/search.o build/board.o build/move.o build/zobrist.o build/chess_server.o
 
 $(info $(shell mkdir -p build))

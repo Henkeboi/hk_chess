@@ -56,6 +56,7 @@ function showBoard(board) {
 let selectedPiece = null;
 let selectedSquare = null;
 let last_move = null;
+let move_mapper = { '0' : 7, '1': 6, '2' : 5, '3' : 4, '4': 3, '5': 2, '6': 1, '7': 0};
 function onSquareClick(row, col) {
     const targetSquare = html_board.children[row * 8 + col];
     if (selectedPiece) {
@@ -65,7 +66,9 @@ function onSquareClick(row, col) {
             selectedSquare = null;
             return;
         }
-        const move = `${selectedSquare.dataset.row},${selectedSquare.dataset.col},${row},${col}`;
+        from_row = selectedSquare.dataset.row;
+        from_col = selectedSquare.dataset.col;
+        const move = `${from_row},${from_col},${row},${col}, `;
         makeMove(move);
         loadBoard();
         selectedPiece = null;
