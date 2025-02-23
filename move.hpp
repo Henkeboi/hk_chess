@@ -22,6 +22,7 @@ public:
 	~Move() = default;
 	void print() const;
 	std::string get_move_as_string() const;
+	std::string as_string() const;
 	[[nodiscard]] inline auto get_from_row() const { return (_from & row_bitmask) >> 3; }
 	[[nodiscard]] inline auto get_from_col() const { return _from & col_bitmask; }
 	[[nodiscard]] inline auto get_to_row() const { return (_to & row_bitmask) >> 3; }

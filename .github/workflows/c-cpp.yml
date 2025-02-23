@@ -15,7 +15,7 @@ jobs:
     steps:
     - name: compile
       run: |
-        sudo apt-get install libc++-dev
+        sudo apt-get update && sudo apt-get install libc++-dev libcurl4-gnutls-dev
         yes | sudo wget -qO- https://apt.llvm.org/llvm.sh | sudo bash -s -- 19
         git clone https://github.com/Henkeboi/hk_chess
         cd hk_chess
