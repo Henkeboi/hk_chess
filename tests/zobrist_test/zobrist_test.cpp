@@ -18,9 +18,9 @@ TEST(ZobrisTest, test_hashing) {
 
 void test_unique_zobrist_hash() {
 	Board board = Board{};
-	board = Board{board, move::Move(1, 4, 3, 4, 0, false, true)};
-	board = Board{board, move::Move(6, 4, 4, 4, 0, false, true)};
-	board = Board{board, move::Move(0, 6, 2, 5, 0, false, true)};
+	board = Board{board, Move(1, 4, 3, 4, 0, false, true)};
+	board = Board{board, Move(6, 4, 4, 4, 0, false, true)};
+	board = Board{board, Move(0, 6, 2, 5, 0, false, true)};
 	const Zobrist zobrist_hasher(board, false);
 	std::map<uint64_t, Board> transposition_table{};
 	uint64_t initial_zobrist_hash = zobrist_hasher.get_initial_zobrist_hash();
@@ -35,7 +35,7 @@ void move_search(int depth, const Board& board, bool maximizing_player, std::map
 	if (depth == 0) 
 		return;
 
-	std::vector<move::Move> moves;
+	std::vector<Move> moves;
  	std::vector<Board> boards;
 	if (maximizing_player) {
 		board.get_white_moves(moves, boards, false);
