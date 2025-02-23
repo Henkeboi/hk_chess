@@ -20,37 +20,37 @@ TEST(BoardTest, find_and_make_moves_test) {
 	Board board{};
 
 	test_find_moves_first_position(board);
-	move::Move first_move{1, 4, 3, 4, pieces::empty, false, true};
+	Move first_move{1, 4, 3, 4, pieces::empty, false, true};
 	board = Board{board, first_move};
 	board = test_make_move_first_position(board);
 
 	test_find_moves_second_position(board);
-	move::Move second_move{6, 4, 4, 4, pieces::empty, false, true};
+	Move second_move{6, 4, 4, 4, pieces::empty, false, true};
 	board = Board{board, second_move};
 	board = test_make_move_second_position(board);
 
 	test_find_moves_third_position(board);
-	move::Move third_move{0, 6, 2, 5};
+	Move third_move{0, 6, 2, 5};
 	board = Board{board, third_move};
 	board = test_make_move_third_position(board);
 
 	test_find_moves_fourth_position(board);
-	move::Move fourth_move{7, 1, 5, 2};
+	Move fourth_move{7, 1, 5, 2};
 	board = Board{board, fourth_move};
 	board = test_make_move_fourth_position(board);
 
 	test_find_moves_fifth_position(board);
-	move::Move fifth_move{0, 5, 4, 1};
+	Move fifth_move{0, 5, 4, 1};
 	board = Board{board, fifth_move};
 	board = test_make_move_fifth_position(board);
 
 	test_find_moves_sixth_position(board);
-	move::Move sixth_move{7, 6, 5, 5};
+	Move sixth_move{7, 6, 5, 5};
 	board = Board{board, sixth_move};
 	board = test_make_move_sixth_position(board);
 
 	test_find_moves_seventh_position(board);
-	//move::Move sixth_move{7, 6, 5, 5};
+	//Move sixth_move{7, 6, 5, 5};
 	//board = Board{board, sixth_move};
 	//board = test_make_move_sixth_position(board);
 }
@@ -58,30 +58,30 @@ TEST(BoardTest, find_and_make_moves_test) {
 void test_find_moves_first_position(Board board) {
 	// Find all moves
 	std::vector<Board> boards_found_after_white_move;
-	std::vector<move::Move> white_moves_found;
+	std::vector<Move> white_moves_found;
 	board.get_white_moves(white_moves_found, boards_found_after_white_move, false);
 
-	std::vector<move::Move> expected_white_moves;
-	expected_white_moves.push_back(move::Move{0, 1, 2, 2});
-	expected_white_moves.push_back(move::Move{0, 1, 2, 0});
-	expected_white_moves.push_back(move::Move{0, 6, 2, 7});
-	expected_white_moves.push_back(move::Move{0, 6, 2, 5});
-	expected_white_moves.push_back(move::Move{1, 0, 2, 0});
-	expected_white_moves.push_back(move::Move{1, 0, 3, 0});
-	expected_white_moves.push_back(move::Move{1, 1, 2, 1});
-	expected_white_moves.push_back(move::Move{1, 1, 3, 1});
-	expected_white_moves.push_back(move::Move{1, 2, 2, 2});
-	expected_white_moves.push_back(move::Move{1, 2, 3, 2});
-	expected_white_moves.push_back(move::Move{1, 3, 2, 3});
-	expected_white_moves.push_back(move::Move{1, 3, 3, 3});
-	expected_white_moves.push_back(move::Move{1, 4, 2, 4});
-	expected_white_moves.push_back(move::Move{1, 4, 3, 4});
-	expected_white_moves.push_back(move::Move{1, 5, 2, 5});
-	expected_white_moves.push_back(move::Move{1, 5, 3, 5});
-	expected_white_moves.push_back(move::Move{1, 6, 2, 6});
-	expected_white_moves.push_back(move::Move{1, 6, 3, 6});
-	expected_white_moves.push_back(move::Move{1, 7, 2, 7});
-	expected_white_moves.push_back(move::Move{1, 7, 3, 7});
+	std::vector<Move> expected_white_moves;
+	expected_white_moves.push_back(Move{0, 1, 2, 2});
+	expected_white_moves.push_back(Move{0, 1, 2, 0});
+	expected_white_moves.push_back(Move{0, 6, 2, 7});
+	expected_white_moves.push_back(Move{0, 6, 2, 5});
+	expected_white_moves.push_back(Move{1, 0, 2, 0});
+	expected_white_moves.push_back(Move{1, 0, 3, 0});
+	expected_white_moves.push_back(Move{1, 1, 2, 1});
+	expected_white_moves.push_back(Move{1, 1, 3, 1});
+	expected_white_moves.push_back(Move{1, 2, 2, 2});
+	expected_white_moves.push_back(Move{1, 2, 3, 2});
+	expected_white_moves.push_back(Move{1, 3, 2, 3});
+	expected_white_moves.push_back(Move{1, 3, 3, 3});
+	expected_white_moves.push_back(Move{1, 4, 2, 4});
+	expected_white_moves.push_back(Move{1, 4, 3, 4});
+	expected_white_moves.push_back(Move{1, 5, 2, 5});
+	expected_white_moves.push_back(Move{1, 5, 3, 5});
+	expected_white_moves.push_back(Move{1, 6, 2, 6});
+	expected_white_moves.push_back(Move{1, 6, 3, 6});
+	expected_white_moves.push_back(Move{1, 7, 2, 7});
+	expected_white_moves.push_back(Move{1, 7, 3, 7});
 	
 	EXPECT_EQ(expected_white_moves.size(), white_moves_found.size());
 	for (size_t i = 0; i < expected_white_moves.size(); ++i) {
@@ -94,15 +94,15 @@ void test_find_moves_first_position(Board board) {
 
 	// Find captures
 	std::vector<Board> boards_found_after_white_capture;
-	std::vector<move::Move> white_captures_found;
+	std::vector<Move> white_captures_found;
 	board.get_white_moves(white_captures_found, boards_found_after_white_move, true);
-	std::vector<move::Move> expected_white_captures;
+	std::vector<Move> expected_white_captures;
 	EXPECT_EQ(expected_white_captures.size(), white_captures_found.size());
 }
 
 Board test_make_move_first_position(const Board board) {
 	// En passant tracking
-	move::Move expected_en_passant{1, 4, 3, 4, pieces::empty, false, true};
+	Move expected_en_passant{1, 4, 3, 4, pieces::empty, false, true};
 	EXPECT_EQ(expected_en_passant.is_en_passant(), board.get_last_move().is_en_passant());
 	EXPECT_EQ(expected_en_passant.enables_en_passant(), board.get_last_move().enables_en_passant());
 	EXPECT_EQ(expected_en_passant.get_promotion_piece(), board.get_last_move().get_promotion_piece());
@@ -125,31 +125,31 @@ Board test_make_move_first_position(const Board board) {
 void test_find_moves_second_position(const Board board) {
 	// Find all moves
 	std::vector<Board> boards_found_after_black_move;
-	std::vector<move::Move> black_moves_found;
+	std::vector<Move> black_moves_found;
 	board.get_black_moves(black_moves_found, boards_found_after_black_move, false);
 
-	std::vector<move::Move> expected_black_moves;
-	expected_black_moves.push_back(move::Move{6, 0, 5, 0});
-	expected_black_moves.push_back(move::Move{6, 0, 4, 0});
-	expected_black_moves.push_back(move::Move{6, 1, 5, 1});
-	expected_black_moves.push_back(move::Move{6, 1, 4, 1});
-	expected_black_moves.push_back(move::Move{6, 2, 5, 2});
-	expected_black_moves.push_back(move::Move{6, 2, 4, 2});
-	expected_black_moves.push_back(move::Move{6, 3, 5, 3});
-	expected_black_moves.push_back(move::Move{6, 3, 4, 3});
-	expected_black_moves.push_back(move::Move{6, 4, 5, 4});
-	expected_black_moves.push_back(move::Move{6, 4, 4, 4});
-	expected_black_moves.push_back(move::Move{6, 5, 5, 5});
-	expected_black_moves.push_back(move::Move{6, 5, 4, 5});
-	expected_black_moves.push_back(move::Move{6, 6, 5, 6});
-	expected_black_moves.push_back(move::Move{6, 6, 4, 6});
-	expected_black_moves.push_back(move::Move{6, 7, 5, 7});
-	expected_black_moves.push_back(move::Move{6, 7, 4, 7});
+	std::vector<Move> expected_black_moves;
+	expected_black_moves.push_back(Move{6, 0, 5, 0});
+	expected_black_moves.push_back(Move{6, 0, 4, 0});
+	expected_black_moves.push_back(Move{6, 1, 5, 1});
+	expected_black_moves.push_back(Move{6, 1, 4, 1});
+	expected_black_moves.push_back(Move{6, 2, 5, 2});
+	expected_black_moves.push_back(Move{6, 2, 4, 2});
+	expected_black_moves.push_back(Move{6, 3, 5, 3});
+	expected_black_moves.push_back(Move{6, 3, 4, 3});
+	expected_black_moves.push_back(Move{6, 4, 5, 4});
+	expected_black_moves.push_back(Move{6, 4, 4, 4});
+	expected_black_moves.push_back(Move{6, 5, 5, 5});
+	expected_black_moves.push_back(Move{6, 5, 4, 5});
+	expected_black_moves.push_back(Move{6, 6, 5, 6});
+	expected_black_moves.push_back(Move{6, 6, 4, 6});
+	expected_black_moves.push_back(Move{6, 7, 5, 7});
+	expected_black_moves.push_back(Move{6, 7, 4, 7});
 	
-	expected_black_moves.push_back(move::Move{7, 1, 5, 2});
-	expected_black_moves.push_back(move::Move{7, 1, 5, 0});
-	expected_black_moves.push_back(move::Move{7, 6, 5, 7});
-	expected_black_moves.push_back(move::Move{7, 6, 5, 5});
+	expected_black_moves.push_back(Move{7, 1, 5, 2});
+	expected_black_moves.push_back(Move{7, 1, 5, 0});
+	expected_black_moves.push_back(Move{7, 6, 5, 7});
+	expected_black_moves.push_back(Move{7, 6, 5, 5});
 
 	EXPECT_EQ(expected_black_moves.size(), black_moves_found.size());
 	for (size_t i = 0; i < expected_black_moves.size(); ++i) {
@@ -162,15 +162,15 @@ void test_find_moves_second_position(const Board board) {
 
 	// Find captures
 	std::vector<Board> boards_found_after_black_capture;
-	std::vector<move::Move> black_captures_found;
+	std::vector<Move> black_captures_found;
 	board.get_black_moves(black_captures_found, boards_found_after_black_move, true);
-	std::vector<move::Move> expected_black_captures;
+	std::vector<Move> expected_black_captures;
 	EXPECT_EQ(expected_black_captures.size(), black_captures_found.size());
 }
 
 Board test_make_move_second_position(const Board board) {
 	// En passant tracking
-	move::Move expected_en_passant{6, 4, 4, 4, pieces::empty, false, true};
+	Move expected_en_passant{6, 4, 4, 4, pieces::empty, false, true};
 	EXPECT_EQ(expected_en_passant.is_en_passant(), board.get_last_move().is_en_passant());
 	EXPECT_EQ(expected_en_passant.enables_en_passant(), board.get_last_move().enables_en_passant());
 	EXPECT_EQ(expected_en_passant.get_promotion_piece(), board.get_last_move().get_promotion_piece());
@@ -193,40 +193,40 @@ Board test_make_move_second_position(const Board board) {
 void test_find_moves_third_position(Board board) {
 	// Find all moves
 	std::vector<Board> boards_found_after_white_move;
-	std::vector<move::Move> white_moves_found;
+	std::vector<Move> white_moves_found;
 	board.get_white_moves(white_moves_found, boards_found_after_white_move, false);
 
-	std::vector<move::Move> expected_white_moves;
-	expected_white_moves.push_back(move::Move{0, 1, 2, 2});
-	expected_white_moves.push_back(move::Move{0, 1, 2, 0});
-	expected_white_moves.push_back(move::Move{0, 3, 1, 4});
-	expected_white_moves.push_back(move::Move{0, 3, 2, 5});
-	expected_white_moves.push_back(move::Move{0, 3, 3, 6});
-	expected_white_moves.push_back(move::Move{0, 3, 4, 7});
-	expected_white_moves.push_back(move::Move{0, 4, 1, 4});
-	expected_white_moves.push_back(move::Move{0, 5, 1, 4});
-	expected_white_moves.push_back(move::Move{0, 5, 2, 3});
-	expected_white_moves.push_back(move::Move{0, 5, 3, 2});
-	expected_white_moves.push_back(move::Move{0, 5, 4, 1});
-	expected_white_moves.push_back(move::Move{0, 5, 5, 0});
-	expected_white_moves.push_back(move::Move{0, 6, 2, 7});
-	expected_white_moves.push_back(move::Move{0, 6, 2, 5});
-	expected_white_moves.push_back(move::Move{0, 6, 1, 4});
+	std::vector<Move> expected_white_moves;
+	expected_white_moves.push_back(Move{0, 1, 2, 2});
+	expected_white_moves.push_back(Move{0, 1, 2, 0});
+	expected_white_moves.push_back(Move{0, 3, 1, 4});
+	expected_white_moves.push_back(Move{0, 3, 2, 5});
+	expected_white_moves.push_back(Move{0, 3, 3, 6});
+	expected_white_moves.push_back(Move{0, 3, 4, 7});
+	expected_white_moves.push_back(Move{0, 4, 1, 4});
+	expected_white_moves.push_back(Move{0, 5, 1, 4});
+	expected_white_moves.push_back(Move{0, 5, 2, 3});
+	expected_white_moves.push_back(Move{0, 5, 3, 2});
+	expected_white_moves.push_back(Move{0, 5, 4, 1});
+	expected_white_moves.push_back(Move{0, 5, 5, 0});
+	expected_white_moves.push_back(Move{0, 6, 2, 7});
+	expected_white_moves.push_back(Move{0, 6, 2, 5});
+	expected_white_moves.push_back(Move{0, 6, 1, 4});
 
-	expected_white_moves.push_back(move::Move{1, 0, 2, 0});
-	expected_white_moves.push_back(move::Move{1, 0, 3, 0});
-	expected_white_moves.push_back(move::Move{1, 1, 2, 1});
-	expected_white_moves.push_back(move::Move{1, 1, 3, 1});
-	expected_white_moves.push_back(move::Move{1, 2, 2, 2});
-	expected_white_moves.push_back(move::Move{1, 2, 3, 2});
-	expected_white_moves.push_back(move::Move{1, 3, 2, 3});
-	expected_white_moves.push_back(move::Move{1, 3, 3, 3});
-	expected_white_moves.push_back(move::Move{1, 5, 2, 5});
-	expected_white_moves.push_back(move::Move{1, 5, 3, 5});
-	expected_white_moves.push_back(move::Move{1, 6, 2, 6});
-	expected_white_moves.push_back(move::Move{1, 6, 3, 6});
-	expected_white_moves.push_back(move::Move{1, 7, 2, 7});
-	expected_white_moves.push_back(move::Move{1, 7, 3, 7});
+	expected_white_moves.push_back(Move{1, 0, 2, 0});
+	expected_white_moves.push_back(Move{1, 0, 3, 0});
+	expected_white_moves.push_back(Move{1, 1, 2, 1});
+	expected_white_moves.push_back(Move{1, 1, 3, 1});
+	expected_white_moves.push_back(Move{1, 2, 2, 2});
+	expected_white_moves.push_back(Move{1, 2, 3, 2});
+	expected_white_moves.push_back(Move{1, 3, 2, 3});
+	expected_white_moves.push_back(Move{1, 3, 3, 3});
+	expected_white_moves.push_back(Move{1, 5, 2, 5});
+	expected_white_moves.push_back(Move{1, 5, 3, 5});
+	expected_white_moves.push_back(Move{1, 6, 2, 6});
+	expected_white_moves.push_back(Move{1, 6, 3, 6});
+	expected_white_moves.push_back(Move{1, 7, 2, 7});
+	expected_white_moves.push_back(Move{1, 7, 3, 7});
 	
 	EXPECT_EQ(expected_white_moves.size(), white_moves_found.size());
 	for (size_t i = 0; i < expected_white_moves.size(); ++i) {
@@ -239,15 +239,15 @@ void test_find_moves_third_position(Board board) {
 
 	// Find captures
 	std::vector<Board> boards_found_after_white_capture;
-	std::vector<move::Move> white_captures_found;
+	std::vector<Move> white_captures_found;
 	board.get_white_moves(white_captures_found, boards_found_after_white_move, true);
-	std::vector<move::Move> expected_white_captures;
+	std::vector<Move> expected_white_captures;
 	EXPECT_EQ(expected_white_captures.size(), white_captures_found.size());
 }
 
 Board test_make_move_third_position(Board board) {
 	// En passant tracking
-	move::Move expected_en_passant{0, 0, 0, 0, pieces::empty, false, false};
+	Move expected_en_passant{0, 0, 0, 0, pieces::empty, false, false};
 	EXPECT_EQ(expected_en_passant.is_en_passant(), board.get_last_move().is_en_passant());
 	EXPECT_EQ(expected_en_passant.enables_en_passant(), board.get_last_move().enables_en_passant());
 	EXPECT_EQ(expected_en_passant.get_promotion_piece(), board.get_last_move().get_promotion_piece());
@@ -270,39 +270,39 @@ Board test_make_move_third_position(Board board) {
 void test_find_moves_fourth_position(const Board board) {
 	// Find all moves
 	std::vector<Board> boards_found_after_black_move;
-	std::vector<move::Move> black_moves_found;
+	std::vector<Move> black_moves_found;
 	board.get_black_moves(black_moves_found, boards_found_after_black_move, false);
 
-	std::vector<move::Move> expected_black_moves;
-	expected_black_moves.push_back(move::Move{6, 0, 5, 0});
-	expected_black_moves.push_back(move::Move{6, 0, 4, 0});
-	expected_black_moves.push_back(move::Move{6, 1, 5, 1});
-	expected_black_moves.push_back(move::Move{6, 1, 4, 1});
-	expected_black_moves.push_back(move::Move{6, 2, 5, 2});
-	expected_black_moves.push_back(move::Move{6, 2, 4, 2});
-	expected_black_moves.push_back(move::Move{6, 3, 5, 3});
-	expected_black_moves.push_back(move::Move{6, 3, 4, 3});
-	expected_black_moves.push_back(move::Move{6, 5, 5, 5});
-	expected_black_moves.push_back(move::Move{6, 5, 4, 5});
-	expected_black_moves.push_back(move::Move{6, 6, 5, 6});
-	expected_black_moves.push_back(move::Move{6, 6, 4, 6});
-	expected_black_moves.push_back(move::Move{6, 7, 5, 7});
-	expected_black_moves.push_back(move::Move{6, 7, 4, 7});
-	expected_black_moves.push_back(move::Move{7, 1, 5, 2});
-	expected_black_moves.push_back(move::Move{7, 1, 5, 0});
-	expected_black_moves.push_back(move::Move{7, 3, 6, 4});
-	expected_black_moves.push_back(move::Move{7, 3, 5, 5});
-	expected_black_moves.push_back(move::Move{7, 3, 4, 6});
-	expected_black_moves.push_back(move::Move{7, 3, 3, 7});
-	expected_black_moves.push_back(move::Move{7, 4, 6, 4});
-	expected_black_moves.push_back(move::Move{7, 5, 6, 4});
-	expected_black_moves.push_back(move::Move{7, 5, 5, 3});
-	expected_black_moves.push_back(move::Move{7, 5, 4, 2});
-	expected_black_moves.push_back(move::Move{7, 5, 3, 1});
-	expected_black_moves.push_back(move::Move{7, 5, 2, 0});
-	expected_black_moves.push_back(move::Move{7, 6, 6, 4});
-	expected_black_moves.push_back(move::Move{7, 6, 5, 7});
-	expected_black_moves.push_back(move::Move{7, 6, 5, 5});
+	std::vector<Move> expected_black_moves;
+	expected_black_moves.push_back(Move{6, 0, 5, 0});
+	expected_black_moves.push_back(Move{6, 0, 4, 0});
+	expected_black_moves.push_back(Move{6, 1, 5, 1});
+	expected_black_moves.push_back(Move{6, 1, 4, 1});
+	expected_black_moves.push_back(Move{6, 2, 5, 2});
+	expected_black_moves.push_back(Move{6, 2, 4, 2});
+	expected_black_moves.push_back(Move{6, 3, 5, 3});
+	expected_black_moves.push_back(Move{6, 3, 4, 3});
+	expected_black_moves.push_back(Move{6, 5, 5, 5});
+	expected_black_moves.push_back(Move{6, 5, 4, 5});
+	expected_black_moves.push_back(Move{6, 6, 5, 6});
+	expected_black_moves.push_back(Move{6, 6, 4, 6});
+	expected_black_moves.push_back(Move{6, 7, 5, 7});
+	expected_black_moves.push_back(Move{6, 7, 4, 7});
+	expected_black_moves.push_back(Move{7, 1, 5, 2});
+	expected_black_moves.push_back(Move{7, 1, 5, 0});
+	expected_black_moves.push_back(Move{7, 3, 6, 4});
+	expected_black_moves.push_back(Move{7, 3, 5, 5});
+	expected_black_moves.push_back(Move{7, 3, 4, 6});
+	expected_black_moves.push_back(Move{7, 3, 3, 7});
+	expected_black_moves.push_back(Move{7, 4, 6, 4});
+	expected_black_moves.push_back(Move{7, 5, 6, 4});
+	expected_black_moves.push_back(Move{7, 5, 5, 3});
+	expected_black_moves.push_back(Move{7, 5, 4, 2});
+	expected_black_moves.push_back(Move{7, 5, 3, 1});
+	expected_black_moves.push_back(Move{7, 5, 2, 0});
+	expected_black_moves.push_back(Move{7, 6, 6, 4});
+	expected_black_moves.push_back(Move{7, 6, 5, 7});
+	expected_black_moves.push_back(Move{7, 6, 5, 5});
 
 	EXPECT_EQ(expected_black_moves.size(), black_moves_found.size());
 	for (size_t i = 0; i < expected_black_moves.size(); ++i) {
@@ -315,15 +315,15 @@ void test_find_moves_fourth_position(const Board board) {
 
 	// Find captures
 	std::vector<Board> boards_found_after_black_capture;
-	std::vector<move::Move> black_captures_found;
+	std::vector<Move> black_captures_found;
 	board.get_black_moves(black_captures_found, boards_found_after_black_move, true);
-	std::vector<move::Move> expected_black_captures;
+	std::vector<Move> expected_black_captures;
 	EXPECT_EQ(expected_black_captures.size(), black_captures_found.size());
 }
 
 Board test_make_move_fourth_position(Board board) {
 	// En passant tracking
-	move::Move expected_en_passant{0, 0, 0, 0, pieces::empty, false, false};
+	Move expected_en_passant{0, 0, 0, 0, pieces::empty, false, false};
 	EXPECT_EQ(expected_en_passant.is_en_passant(), board.get_last_move().is_en_passant());
 	EXPECT_EQ(expected_en_passant.enables_en_passant(), board.get_last_move().enables_en_passant());
 	EXPECT_EQ(expected_en_passant.get_promotion_piece(), board.get_last_move().get_promotion_piece());
@@ -346,37 +346,37 @@ Board test_make_move_fourth_position(Board board) {
 void test_find_moves_fifth_position(Board board) {
 	// Find all moves
 	std::vector<Board> boards_found_after_white_move;
-	std::vector<move::Move> white_moves_found;
+	std::vector<Move> white_moves_found;
 	board.get_white_moves(white_moves_found, boards_found_after_white_move, false);
 
-	std::vector<move::Move> expected_white_moves;
-	expected_white_moves.push_back(move::Move{0, 1, 2, 2});
-	expected_white_moves.push_back(move::Move{0, 1, 2, 0});
-	expected_white_moves.push_back(move::Move{0, 3, 1, 4});
-	expected_white_moves.push_back(move::Move{0, 4, 1, 4});
-	expected_white_moves.push_back(move::Move{0, 5, 1, 4});
-	expected_white_moves.push_back(move::Move{0, 5, 2, 3});
-	expected_white_moves.push_back(move::Move{0, 5, 3, 2});
-	expected_white_moves.push_back(move::Move{0, 5, 4, 1});
-	expected_white_moves.push_back(move::Move{0, 5, 5, 0});
-	expected_white_moves.push_back(move::Move{0, 7, 0, 6});
-	expected_white_moves.push_back(move::Move{1, 0, 2, 0});
-	expected_white_moves.push_back(move::Move{1, 0, 3, 0});
-	expected_white_moves.push_back(move::Move{1, 1, 2, 1});
-	expected_white_moves.push_back(move::Move{1, 1, 3, 1});
-	expected_white_moves.push_back(move::Move{1, 2, 2, 2});
-	expected_white_moves.push_back(move::Move{1, 2, 3, 2});
-	expected_white_moves.push_back(move::Move{1, 3, 2, 3});
-	expected_white_moves.push_back(move::Move{1, 3, 3, 3});
-	expected_white_moves.push_back(move::Move{1, 6, 2, 6});
-	expected_white_moves.push_back(move::Move{1, 6, 3, 6});
-	expected_white_moves.push_back(move::Move{1, 7, 2, 7});
-	expected_white_moves.push_back(move::Move{1, 7, 3, 7});
-	expected_white_moves.push_back(move::Move{2, 5, 4, 6});
-	expected_white_moves.push_back(move::Move{2, 5, 4, 4});
-	expected_white_moves.push_back(move::Move{2, 5, 3, 7});
-	expected_white_moves.push_back(move::Move{2, 5, 3, 3});
-	expected_white_moves.push_back(move::Move{2, 5, 0, 6});
+	std::vector<Move> expected_white_moves;
+	expected_white_moves.push_back(Move{0, 1, 2, 2});
+	expected_white_moves.push_back(Move{0, 1, 2, 0});
+	expected_white_moves.push_back(Move{0, 3, 1, 4});
+	expected_white_moves.push_back(Move{0, 4, 1, 4});
+	expected_white_moves.push_back(Move{0, 5, 1, 4});
+	expected_white_moves.push_back(Move{0, 5, 2, 3});
+	expected_white_moves.push_back(Move{0, 5, 3, 2});
+	expected_white_moves.push_back(Move{0, 5, 4, 1});
+	expected_white_moves.push_back(Move{0, 5, 5, 0});
+	expected_white_moves.push_back(Move{0, 7, 0, 6});
+	expected_white_moves.push_back(Move{1, 0, 2, 0});
+	expected_white_moves.push_back(Move{1, 0, 3, 0});
+	expected_white_moves.push_back(Move{1, 1, 2, 1});
+	expected_white_moves.push_back(Move{1, 1, 3, 1});
+	expected_white_moves.push_back(Move{1, 2, 2, 2});
+	expected_white_moves.push_back(Move{1, 2, 3, 2});
+	expected_white_moves.push_back(Move{1, 3, 2, 3});
+	expected_white_moves.push_back(Move{1, 3, 3, 3});
+	expected_white_moves.push_back(Move{1, 6, 2, 6});
+	expected_white_moves.push_back(Move{1, 6, 3, 6});
+	expected_white_moves.push_back(Move{1, 7, 2, 7});
+	expected_white_moves.push_back(Move{1, 7, 3, 7});
+	expected_white_moves.push_back(Move{2, 5, 4, 6});
+	expected_white_moves.push_back(Move{2, 5, 4, 4});
+	expected_white_moves.push_back(Move{2, 5, 3, 7});
+	expected_white_moves.push_back(Move{2, 5, 3, 3});
+	expected_white_moves.push_back(Move{2, 5, 0, 6});
 	
 	EXPECT_EQ(expected_white_moves.size(), white_moves_found.size());
 	for (size_t i = 0; i < expected_white_moves.size(); ++i) {
@@ -389,11 +389,11 @@ void test_find_moves_fifth_position(Board board) {
 
 	// Find captures
 	std::vector<Board> boards_found_after_white_capture;
-	std::vector<move::Move> white_captures_found;
+	std::vector<Move> white_captures_found;
 	board.get_white_moves(white_captures_found, boards_found_after_white_move, true);
 
-	std::vector<move::Move> expected_white_captures;
-	expected_white_captures.push_back(move::Move{2, 5, 4, 4});
+	std::vector<Move> expected_white_captures;
+	expected_white_captures.push_back(Move{2, 5, 4, 4});
 
 	EXPECT_EQ(expected_white_captures.size(), white_captures_found.size());
 	for (size_t i = 0; i < expected_white_moves.size(); ++i) {
@@ -407,7 +407,7 @@ void test_find_moves_fifth_position(Board board) {
 
 Board test_make_move_fifth_position(Board board) {
 	// En passant tracking
-	move::Move expected_en_passant{0, 0, 0, 0, pieces::empty, false, false};
+	Move expected_en_passant{0, 0, 0, 0, pieces::empty, false, false};
 	EXPECT_EQ(expected_en_passant.is_en_passant(), board.get_last_move().is_en_passant());
 	EXPECT_EQ(expected_en_passant.enables_en_passant(), board.get_last_move().enables_en_passant());
 	EXPECT_EQ(expected_en_passant.get_promotion_piece(), board.get_last_move().get_promotion_piece());
@@ -430,40 +430,40 @@ Board test_make_move_fifth_position(Board board) {
 void test_find_moves_sixth_position(Board board) {
 	// Find all moves
 	std::vector<Board> boards_found_after_black_move;
-	std::vector<move::Move> black_moves_found;
+	std::vector<Move> black_moves_found;
 	board.get_black_moves(black_moves_found, boards_found_after_black_move, false);
 
-	std::vector<move::Move> expected_black_moves;
-	expected_black_moves.push_back(move::Move{5, 2, 7, 1});
-	expected_black_moves.push_back(move::Move{5, 2, 6, 4});
-	expected_black_moves.push_back(move::Move{5, 2, 4, 0});
-	expected_black_moves.push_back(move::Move{5, 2, 3, 3});
-	expected_black_moves.push_back(move::Move{5, 2, 3, 1});
-	expected_black_moves.push_back(move::Move{6, 0, 5, 0});
-	expected_black_moves.push_back(move::Move{6, 0, 4, 0});
-	expected_black_moves.push_back(move::Move{6, 1, 5, 1});
-	expected_black_moves.push_back(move::Move{6, 3, 5, 3});
-	expected_black_moves.push_back(move::Move{6, 3, 4, 3});
-	expected_black_moves.push_back(move::Move{6, 5, 5, 5});
-	expected_black_moves.push_back(move::Move{6, 5, 4, 5});
-	expected_black_moves.push_back(move::Move{6, 6, 5, 6});
-	expected_black_moves.push_back(move::Move{6, 6, 4, 6});
-	expected_black_moves.push_back(move::Move{6, 7, 5, 7});
-	expected_black_moves.push_back(move::Move{6, 7, 4, 7});
-	expected_black_moves.push_back(move::Move{7, 0, 7, 1});
-	expected_black_moves.push_back(move::Move{7, 3, 6, 4});
-	expected_black_moves.push_back(move::Move{7, 3, 5, 5});
-	expected_black_moves.push_back(move::Move{7, 3, 4, 6});
-	expected_black_moves.push_back(move::Move{7, 3, 3, 7});
-	expected_black_moves.push_back(move::Move{7, 4, 6, 4});
-	expected_black_moves.push_back(move::Move{7, 5, 6, 4});
-	expected_black_moves.push_back(move::Move{7, 5, 5, 3});
-	expected_black_moves.push_back(move::Move{7, 5, 4, 2});
-	expected_black_moves.push_back(move::Move{7, 5, 3, 1});
-	expected_black_moves.push_back(move::Move{7, 5, 2, 0});
-	expected_black_moves.push_back(move::Move{7, 6, 6, 4});
-	expected_black_moves.push_back(move::Move{7, 6, 5, 7});
-	expected_black_moves.push_back(move::Move{7, 6, 5, 5});
+	std::vector<Move> expected_black_moves;
+	expected_black_moves.push_back(Move{5, 2, 7, 1});
+	expected_black_moves.push_back(Move{5, 2, 6, 4});
+	expected_black_moves.push_back(Move{5, 2, 4, 0});
+	expected_black_moves.push_back(Move{5, 2, 3, 3});
+	expected_black_moves.push_back(Move{5, 2, 3, 1});
+	expected_black_moves.push_back(Move{6, 0, 5, 0});
+	expected_black_moves.push_back(Move{6, 0, 4, 0});
+	expected_black_moves.push_back(Move{6, 1, 5, 1});
+	expected_black_moves.push_back(Move{6, 3, 5, 3});
+	expected_black_moves.push_back(Move{6, 3, 4, 3});
+	expected_black_moves.push_back(Move{6, 5, 5, 5});
+	expected_black_moves.push_back(Move{6, 5, 4, 5});
+	expected_black_moves.push_back(Move{6, 6, 5, 6});
+	expected_black_moves.push_back(Move{6, 6, 4, 6});
+	expected_black_moves.push_back(Move{6, 7, 5, 7});
+	expected_black_moves.push_back(Move{6, 7, 4, 7});
+	expected_black_moves.push_back(Move{7, 0, 7, 1});
+	expected_black_moves.push_back(Move{7, 3, 6, 4});
+	expected_black_moves.push_back(Move{7, 3, 5, 5});
+	expected_black_moves.push_back(Move{7, 3, 4, 6});
+	expected_black_moves.push_back(Move{7, 3, 3, 7});
+	expected_black_moves.push_back(Move{7, 4, 6, 4});
+	expected_black_moves.push_back(Move{7, 5, 6, 4});
+	expected_black_moves.push_back(Move{7, 5, 5, 3});
+	expected_black_moves.push_back(Move{7, 5, 4, 2});
+	expected_black_moves.push_back(Move{7, 5, 3, 1});
+	expected_black_moves.push_back(Move{7, 5, 2, 0});
+	expected_black_moves.push_back(Move{7, 6, 6, 4});
+	expected_black_moves.push_back(Move{7, 6, 5, 7});
+	expected_black_moves.push_back(Move{7, 6, 5, 5});
 
 	EXPECT_EQ(expected_black_moves.size(), black_moves_found.size());
 	for (size_t i = 0; i < expected_black_moves.size(); ++i) {
@@ -476,15 +476,15 @@ void test_find_moves_sixth_position(Board board) {
 
 	// Find captures
 	std::vector<Board> boards_found_after_black_capture;
-	std::vector<move::Move> black_captures_found;
+	std::vector<Move> black_captures_found;
 	board.get_black_moves(black_captures_found, boards_found_after_black_move, true);
-	std::vector<move::Move> expected_black_captures;
+	std::vector<Move> expected_black_captures;
 	EXPECT_EQ(expected_black_captures.size(), black_captures_found.size());
 }
 
 Board test_make_move_sixth_position(Board board) {
 	// En passant tracking
-	move::Move expected_en_passant{0, 0, 0, 0, pieces::empty, false, false};
+	Move expected_en_passant{0, 0, 0, 0, pieces::empty, false, false};
 	EXPECT_EQ(expected_en_passant.is_en_passant(), board.get_last_move().is_en_passant());
 	EXPECT_EQ(expected_en_passant.enables_en_passant(), board.get_last_move().enables_en_passant());
 	EXPECT_EQ(expected_en_passant.get_promotion_piece(), board.get_last_move().get_promotion_piece());
@@ -508,43 +508,43 @@ Board test_make_move_sixth_position(Board board) {
 void test_find_moves_seventh_position(Board board) {
 	// Find all moves
 	std::vector<Board> boards_found_after_white_move;
-	std::vector<move::Move> white_moves_found;
+	std::vector<Move> white_moves_found;
 	board.get_white_moves(white_moves_found, boards_found_after_white_move, false);
 
-	std::vector<move::Move> expected_white_moves;
-	expected_white_moves.push_back(move::Move{0, 1, 2, 2});
-	expected_white_moves.push_back(move::Move{0, 1, 2, 0});
-	expected_white_moves.push_back(move::Move{0, 3, 1, 4});
-	expected_white_moves.push_back(move::Move{0, 4, 1, 4});
-	expected_white_moves.push_back(move::Move{0, 4, 0, 5});
-	expected_white_moves.push_back(move::Move{0, 4, 0, 6});
-	expected_white_moves.push_back(move::Move{0, 7, 0, 6});
-	expected_white_moves.push_back(move::Move{0, 7, 0, 5});
-	expected_white_moves.push_back(move::Move{1, 0, 2, 0});
-	expected_white_moves.push_back(move::Move{1, 0, 3, 0});
-	expected_white_moves.push_back(move::Move{1, 1, 2, 1});
-	expected_white_moves.push_back(move::Move{1, 1, 3, 1});
-	expected_white_moves.push_back(move::Move{1, 2, 2, 2});
-	expected_white_moves.push_back(move::Move{1, 2, 3, 2});
-	expected_white_moves.push_back(move::Move{1, 3, 2, 3});
-	expected_white_moves.push_back(move::Move{1, 3, 3, 3});
-	expected_white_moves.push_back(move::Move{1, 6, 2, 6});
-	expected_white_moves.push_back(move::Move{1, 6, 3, 6});
-	expected_white_moves.push_back(move::Move{1, 7, 2, 7});
-	expected_white_moves.push_back(move::Move{1, 7, 3, 7});
-	expected_white_moves.push_back(move::Move{2, 5, 4, 6});
-	expected_white_moves.push_back(move::Move{2, 5, 4, 4});
-	expected_white_moves.push_back(move::Move{2, 5, 3, 7});
-	expected_white_moves.push_back(move::Move{2, 5, 3, 3});
-	expected_white_moves.push_back(move::Move{2, 5, 0, 6});
+	std::vector<Move> expected_white_moves;
+	expected_white_moves.push_back(Move{0, 1, 2, 2});
+	expected_white_moves.push_back(Move{0, 1, 2, 0});
+	expected_white_moves.push_back(Move{0, 3, 1, 4});
+	expected_white_moves.push_back(Move{0, 4, 1, 4});
+	expected_white_moves.push_back(Move{0, 4, 0, 5});
+	expected_white_moves.push_back(Move{0, 4, 0, 6});
+	expected_white_moves.push_back(Move{0, 7, 0, 6});
+	expected_white_moves.push_back(Move{0, 7, 0, 5});
+	expected_white_moves.push_back(Move{1, 0, 2, 0});
+	expected_white_moves.push_back(Move{1, 0, 3, 0});
+	expected_white_moves.push_back(Move{1, 1, 2, 1});
+	expected_white_moves.push_back(Move{1, 1, 3, 1});
+	expected_white_moves.push_back(Move{1, 2, 2, 2});
+	expected_white_moves.push_back(Move{1, 2, 3, 2});
+	expected_white_moves.push_back(Move{1, 3, 2, 3});
+	expected_white_moves.push_back(Move{1, 3, 3, 3});
+	expected_white_moves.push_back(Move{1, 6, 2, 6});
+	expected_white_moves.push_back(Move{1, 6, 3, 6});
+	expected_white_moves.push_back(Move{1, 7, 2, 7});
+	expected_white_moves.push_back(Move{1, 7, 3, 7});
+	expected_white_moves.push_back(Move{2, 5, 4, 6});
+	expected_white_moves.push_back(Move{2, 5, 4, 4});
+	expected_white_moves.push_back(Move{2, 5, 3, 7});
+	expected_white_moves.push_back(Move{2, 5, 3, 3});
+	expected_white_moves.push_back(Move{2, 5, 0, 6});
 
-	expected_white_moves.push_back(move::Move{4, 1, 5, 2});
-	expected_white_moves.push_back(move::Move{4, 1, 5, 0});
-	expected_white_moves.push_back(move::Move{4, 1, 3, 2});
-	expected_white_moves.push_back(move::Move{4, 1, 2, 3});
-	expected_white_moves.push_back(move::Move{4, 1, 1, 4});
-	expected_white_moves.push_back(move::Move{4, 1, 0, 5});
-	expected_white_moves.push_back(move::Move{4, 1, 3, 0});
+	expected_white_moves.push_back(Move{4, 1, 5, 2});
+	expected_white_moves.push_back(Move{4, 1, 5, 0});
+	expected_white_moves.push_back(Move{4, 1, 3, 2});
+	expected_white_moves.push_back(Move{4, 1, 2, 3});
+	expected_white_moves.push_back(Move{4, 1, 1, 4});
+	expected_white_moves.push_back(Move{4, 1, 0, 5});
+	expected_white_moves.push_back(Move{4, 1, 3, 0});
 
 	EXPECT_EQ(expected_white_moves.size(), white_moves_found.size());
 	for (size_t i = 0; i < expected_white_moves.size(); ++i) {
@@ -557,12 +557,12 @@ void test_find_moves_seventh_position(Board board) {
 
 	// Find captures
 	std::vector<Board> boards_found_after_white_capture;
-	std::vector<move::Move> white_captures_found;
+	std::vector<Move> white_captures_found;
 	board.get_white_moves(white_captures_found, boards_found_after_white_move, true);
 
-	std::vector<move::Move> expected_white_captures;
-	expected_white_captures.push_back(move::Move{2, 5, 4, 4});
-	expected_white_captures.push_back(move::Move{4, 1, 5, 2});
+	std::vector<Move> expected_white_captures;
+	expected_white_captures.push_back(Move{2, 5, 4, 4});
+	expected_white_captures.push_back(Move{4, 1, 5, 2});
 
 
 	EXPECT_EQ(expected_white_captures.size(), white_captures_found.size());
