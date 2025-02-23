@@ -1,6 +1,6 @@
 all: main 
-CXX = clang -std=c++23 -O3 -Wall -Wextra -lcurl
-CXXFLAGS = -lstdc++ -lm
+CXX = clang -std=c++23 -O3 -Wall -Wextra
+CXXFLAGS = -lstdc++ -lm -lcurl
 
 ubuntu: CXX = clang-19 -std=c++23 -O3 -Wall -Wextra -Werror
 ubuntu: main
